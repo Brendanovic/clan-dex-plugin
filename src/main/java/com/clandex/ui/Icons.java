@@ -28,6 +28,10 @@ public final class Icons
 	/** Marks a shiny: a small gold four-pointed sparkle. */
 	static final ImageIcon SHINY = new ImageIcon(sparkle(12, Theme.SHINY));
 
+	/** Gender marks next to a catch's name: the usual blue male and pink female symbols. */
+	static final ImageIcon MALE = new ImageIcon(genderSymbol(12, new Color(0x5DADE2), true));
+	static final ImageIcon FEMALE = new ImageIcon(genderSymbol(12, new Color(0xF78FB3), false));
+
 	/** Header button that opens the plugin's settings. */
 	static final ImageIcon COG = new ImageIcon(cog(14, Theme.ICON));
 	static final ImageIcon COG_HOVER = new ImageIcon(cog(14, Theme.ICON_HOVER));
@@ -79,6 +83,30 @@ public final class Icons
 		star.quadTo(7, 7, 8, 0);
 		g.setColor(color);
 		g.fill(star);
+		g.dispose();
+		return img;
+	}
+
+	/** Male: a ring with an arrow to the top right. Female: a ring with a cross below. */
+	private static BufferedImage genderSymbol(int size, Color color, boolean male)
+	{
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = start(img);
+		g.setColor(color);
+		g.setStroke(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+		if (male)
+		{
+			g.drawOval(1, 5, 9, 9);
+			g.drawLine(9, 6, 14, 1);
+			g.drawLine(10, 1, 14, 1);
+			g.drawLine(14, 1, 14, 5);
+		}
+		else
+		{
+			g.drawOval(3, 1, 10, 10);
+			g.drawLine(8, 11, 8, 15);
+			g.drawLine(5, 13, 11, 13);
+		}
 		g.dispose();
 		return img;
 	}

@@ -61,6 +61,8 @@ public class DexClientTest
 	@Test
 	public void missingPlayerIsNoEntry()
 	{
+		// no display settings: neutral words
+		assertEquals("entries", client.parse("{\"version\":3," + NAMES + ",\"players\":{}}", KEY).getInfo().entries());
 		assertTrue(client.parse("{\"version\":3," + NAMES + ",\"players\":{}}", KEY).isNoEntry());
 	}
 
@@ -76,10 +78,11 @@ public class DexClientTest
 		SyncResult r = client.parse("{\"version\":3," + NAMES
 			+ ",\"sprite\":\"https://x/{n}.png\",\"spriteShiny\":\"https://x/shiny/{n}.png\""
 			+ ",\"itemSprite\":\"http://not-https/{id}.png\""
-			+ ",\"items\":{\"basic-orb\":{\"name\":\"Basic Orb\"},\"level-treat\":{\"name\":\"Level Treat\"}}"
+			+ ",\"display\":{\"unlimitedItems\":[{\"id\":\"basic-orb\",\"name\":\"Basic Orb\"}],\"terms\":{\"entry\":\"creature\",\"entries\":\"creatures\"}}"
+			+ ",\"items\":{\"level-treat\":{\"name\":\"Level Treat\"}}"
 			+ ",\"players\":{\"" + KEY + "\":{\"rev\":3,\"dex\":{\"1\":2}"
 			+ ",\"mons\":["
-			+ "{\"id\":\"aaaa111111\",\"no\":1,\"dex\":1,\"shiny\":true,\"gender\":\"female\",\"nature\":\"Adamant\",\"ability\":\"Venvenlo Quatumo\",\"hiddenAbility\":true,\"caughtAt\":\"2026-11-09T01:11:52.595Z\","
+			+ "{\"id\":\"aaaa111111\",\"no\":1,\"dex\":1,\"shiny\":true,\"gender\":\"female\",\"nature\":\"Adamant\",\"ability\":\"Quick Reflexes\",\"hiddenAbility\":true,\"caughtAt\":\"2026-11-09T01:11:52.595Z\","
 			+ "\"caughtWith\":\"basic-orb\",\"throws\":3,\"level\":14,\"ivs\":{\"atk\":2,\"def\":5,\"spe\":5,\"spc\":9},\"nickname\":\"later field\"},"
 			+ "{\"id\":\"bbbb222222\",\"dex\":1,\"shiny\":false,\"caughtAt\":null}]"
 			+ ",\"bag\":{\"level-treat\":1,\"basic-orb\":2,\"mystery\":1}}}}", KEY);
@@ -99,10 +102,13 @@ public class DexClientTest
 		assertEquals(Integer.valueOf(1), shiny.getNumber());
 		assertEquals("female", shiny.getGender());
 		assertEquals("Adamant", shiny.getNature());
-		assertEquals("Venvenlo Quatumo", shiny.getAbility());
+		assertEquals("Quick Reflexes", shiny.getAbility());
 		assertTrue(shiny.isHiddenAbility());
 		assertEquals(Integer.valueOf(3), shiny.getThrowCount());
 		assertEquals("basic-orb", shiny.getCaughtWith());
+		assertEquals("Basic Orb", info.itemName("basic-orb"));
+		assertEquals("creatures", info.entries());
+		assertEquals(java.util.Collections.singletonMap("basic-orb", "Basic Orb"), info.getUnlimitedItems());
 		assertEquals(9, shiny.getIvs()[3]);
 		assertEquals(java.time.Instant.parse("2026-11-09T01:11:52.595Z"), shiny.getCaughtAt());
 		Catch old = p.getCatches().get(1);
@@ -113,7 +119,7 @@ public class DexClientTest
 		assertEquals(null, old.getGender());
 		assertEquals(null, old.getNature());
 
-		// bag follows the bot's item order, unknown items last; Basic Orbs are unlimited, so never counted
+		// bag follows the bot's item order, unknown items last; the free ball is unlimited, so never counted
 		assertEquals(java.util.Arrays.asList("level-treat", "mystery"), new java.util.ArrayList<>(p.getBag().keySet()));
 	}
 
@@ -124,7 +130,7 @@ public class DexClientTest
 		String file = "{\"version\":3," + NAMES + ",\"keyCheck\":\"" + encrypt("clan-dex-key-check") + "\""
 			+ ",\"members\":{\"" + KEY + "\":\"YNDinMCMzE4TF7mPPtFKjIi5Nonw1hAwr2bLR7dwBdQKI08IEYKObRPmNBo=\"}"
 			+ ",\"baseStats\":{\"1\":{\"hp\":45,\"atk\":49,\"def\":49,\"spe\":45,\"spc\":65}}"
-			+ ",\"players\":{\"" + KEY + "\":{\"rev\":1,\"dex\":{\"0\":1},\"mons\":[{\"id\":\"m1\",\"no\":1,\"dex\":0,\"moves\":[\"Growl\",\"Tackle\"]}]}}}";
+			+ ",\"players\":{\"" + KEY + "\":{\"rev\":1,\"dex\":{\"0\":1},\"mons\":[{\"id\":\"m1\",\"no\":1,\"dex\":0,\"moves\":[\"Move One\",\"Move Two\"]}]}}}";
 
 		SyncResult wrong = client.parse(file, KEY, "some-random-key");
 		assertEquals("That clan key doesn't match your clan's", wrong.getError());
@@ -133,7 +139,7 @@ public class DexClientTest
 		assertEquals(null, right.getError());
 		assertEquals("Fake Test Player", right.getInfo().getMembers().get(KEY));
 		assertEquals(45, right.getInfo().baseStats(0)[0]);                // file's "1" is entry index 0
-		assertEquals(java.util.Arrays.asList("Growl", "Tackle"), right.getPlayer().getCatches().get(0).getMoves());
+		assertEquals(java.util.Arrays.asList("Move One", "Move Two"), right.getPlayer().getCatches().get(0).getMoves());
 	}
 
 	/** The bot's names.js format, so this test can make its own key check. */

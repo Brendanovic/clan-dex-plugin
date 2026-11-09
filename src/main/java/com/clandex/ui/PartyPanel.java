@@ -27,10 +27,10 @@ import javax.swing.SwingConstants;
  * The Party tab: up to 6 of the player's catches, each as a card.
  *
  * <pre>
- *  [ big  ]  Moroka #001          Lv 5   x
+ *  [ big  ]  Name #001             Lv 5   x
  *  [sprite]  [==========] HP 21/21
  *            Atk 12  Def 10  Spe 14  Spc 11
- *            Zelmoro Rodrilo   Growl
+ *            Move one        Move two
  *  ( Empty slot )                              <- until all 6 are filled
  * </pre>
  *
@@ -46,7 +46,7 @@ class PartyPanel extends JPanel
 	private final Consumer<String> onRemove;
 	private final JPanel cards = new JPanel();
 
-	/** {@code onRemove} gets the catch id when the player removes a Creature from the party. */
+	/** {@code onRemove} gets the catch id when the player removes a catch from the party. */
 	PartyPanel(SpriteLoader sprites, Consumer<String> onRemove)
 	{
 		super(new BorderLayout());
@@ -70,7 +70,7 @@ class PartyPanel extends JPanel
 		}
 		for (int i = members.size(); i < PartyStore.MAX_SIZE; i++)
 		{
-			cards.add(Layout.fullWidth(emptySlot(i == members.size())));
+			cards.add(Layout.fullWidth(emptySlot(i == members.size(), info == null ? "entry" : info.entry())));
 			cards.add(Layout.vgap(4));
 		}
 		revalidate();
@@ -181,9 +181,11 @@ class PartyPanel extends JPanel
 		return holder;
 	}
 
-	private static JPanel emptySlot(boolean showHint)
+	/** An empty party slot; the first one says how to fill it, in the bot's word for an entry. */
+	private static JPanel emptySlot(boolean showHint, String entry)
 	{
-		JLabel label = Layout.label(showHint ? "Empty slot - open a Creature in the Dex and press + Party" : "Empty slot",
+		String article = !entry.isEmpty() && "aeiouAEIOU".indexOf(entry.charAt(0)) >= 0 ? "an " : "a ";
+		JLabel label = Layout.label(showHint ? "Empty slot - open " + article + entry + " in the Dex and press + Party" : "Empty slot",
 			Theme.SMALL, Theme.TEXT_FAINT);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		JPanel slot = new JPanel(new BorderLayout());

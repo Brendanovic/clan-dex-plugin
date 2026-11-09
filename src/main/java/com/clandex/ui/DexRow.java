@@ -7,6 +7,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
@@ -17,10 +21,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -37,11 +44,9 @@ import javax.swing.Timer;
  *  [ big  ]  Name                               <- detail card, slides open on click
  *  [sprite]  Caught 3 times (1 shiny)
  *            Your most caught
- *  [s] Moroka #001                     Lv 14   <- one block per catch, by the player's number
- *      Male, Great Orb, 3 throws                  for it ("--rarecandy moroka 1" uses it)
- *      Adamant nature, Static                     "+ Party" next to the level adds it to the party
- *      Growl, Tackle
- *      9 Nov 2026, 01:11, IVs 2/5/5/9
+ *  [s] Name #001 (m)               Lv 14  + Party   <- one block per catch, by the player's number
+ *      Show more                                       (the bot's commands use it); opens
+ *                                                      that catch's details (see catchLine)
  * </pre>
  *
  * Caught entries are bright with their sprite in full (the shiny sprite if they own a shiny);
@@ -82,6 +87,7 @@ class DexRow extends JPanel
 	private List<Catch> catches = Collections.emptyList();
 	private DexInfo info;
 	private PartyControl party; // null until the panel provides it
+	private final Set<String> openCatches = new HashSet<>(); // catch ids showing their details
 
 	/** Whether this row shows pictures: false when the bot sends no sprites. */
 	private boolean spritesOn;
@@ -274,74 +280,35 @@ class DexRow extends JPanel
 		}
 	}
 
+	/**
+	 * One catch:
+	 * <pre>
+	 *  [s] Name #001 (f)                 Lv 1  In party
+	 *      Show more
+	 *      Caught with   Free ball               <- only while open; each catch opens on its own
+	 *      Caught on     8 Nov 2026, 12:00
+	 *      Throws        3
+	 *      Nature        Brave
+	 *      Ability       Ability name
+	 *      IVs           Atk 3     Def 3
+	 *                    Spe 14    Spc 11
+	 *      Moves         Move one  Move two
+	 * </pre>
+	 */
 	private JPanel catchLine(Catch c)
 	{
-		String title = name + (c.getNumber() != null ? String.format(" #%03d", c.getNumber()) : "") + (c.isShiny() ? "  Shiny" : "");
+		boolean open = openCatches.contains(c.getId());
 
-		List<String> how = new ArrayList<>();
-		if (c.getGender() != null)
+		JPanel body = new JPanel();
+		body.setOpaque(false);
+		body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+		body.add(Layout.fullWidth(titleRow(c)));
+		body.add(showMoreToggle(c, open));
+		if (open)
 		{
-			how.add(c.getGender().equals("female") ? "Female" : "Male");
+			body.add(Layout.vgap(4));
+			body.add(Layout.fullWidth(details(c)));
 		}
-		if (c.getCaughtWith() != null && info != null)
-		{
-			how.add(info.itemName(c.getCaughtWith()));
-		}
-		if (c.getThrowCount() != null)
-		{
-			how.add(c.getThrowCount() + (c.getThrowCount() == 1 ? " throw" : " throws"));
-		}
-
-		List<String> traits = new ArrayList<>();
-		if (c.getNature() != null)
-		{
-			traits.add(c.getNature() + " nature");
-		}
-		if (c.getAbility() != null)
-		{
-			traits.add(c.getAbility() + (c.isHiddenAbility() ? " (hidden ability)" : ""));
-		}
-
-		List<String> when = new ArrayList<>();
-		when.add(c.getCaughtAt() != null ? DATE.format(c.getCaughtAt()) : "Date not recorded");
-		int[] ivs = c.getIvs();
-		if (ivs != null)
-		{
-			when.add("IVs " + ivs[0] + "/" + ivs[1] + "/" + ivs[2] + "/" + ivs[3]);
-		}
-
-		JPanel titleRow = new JPanel(new BorderLayout(6, 0));
-		titleRow.setOpaque(false);
-		titleRow.add(Layout.label(title, Theme.SMALL, c.isShiny() ? Theme.SHINY : Theme.TEXT), BorderLayout.CENTER);
-		JPanel titleRight = new JPanel(new BorderLayout(8, 0));
-		titleRight.setOpaque(false);
-		if (c.getLevel() != null)
-		{
-			titleRight.add(Layout.label("Lv " + c.getLevel(), Theme.SMALL, Theme.ACCENT), BorderLayout.WEST);
-		}
-		if (party != null && !c.getId().isEmpty())
-		{
-			titleRight.add(partyToggle(c), BorderLayout.EAST);
-		}
-		titleRow.add(titleRight, BorderLayout.EAST);
-
-		JPanel text = new JPanel();
-		text.setOpaque(false);
-		text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
-		text.add(Layout.fullWidth(titleRow));
-		if (!how.isEmpty())
-		{
-			text.add(Layout.label(String.join(", ", how), Theme.SMALL, Theme.TEXT_MUTED));
-		}
-		if (!traits.isEmpty())
-		{
-			text.add(Layout.label(String.join(", ", traits), Theme.SMALL, c.isHiddenAbility() ? Theme.SHINY : Theme.TEXT_MUTED));
-		}
-		if (!c.getMoves().isEmpty())
-		{
-			text.add(Layout.label(String.join(", ", c.getMoves()), Theme.SMALL, Theme.TEXT_MUTED));
-		}
-		text.add(Layout.label(String.join(", ", when), Theme.SMALL, Theme.TEXT_FAINT));
 
 		JLabel picture = new JLabel(pick(c.isShiny() ? shinySprite : spriteCaught, Sprites.PLACEHOLDER));
 		picture.setVerticalAlignment(SwingConstants.TOP);
@@ -352,8 +319,156 @@ class DexRow extends JPanel
 		line.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
 		line.setToolTipText(c.getId().isEmpty() ? null : "Catch id " + c.getId());
 		line.add(picture, BorderLayout.WEST);
-		line.add(text, BorderLayout.CENTER);
+		line.add(body, BorderLayout.CENTER);
 		return line;
+	}
+
+	/** "Name #001" and its gender on the left; level and the party button on the right. */
+	private JPanel titleRow(Catch c)
+	{
+		String title = name + (c.getNumber() != null ? String.format(" #%03d", c.getNumber()) : "");
+		JLabel titleLabel = Layout.label(title, Theme.SMALL, c.isShiny() ? Theme.SHINY : Theme.TEXT);
+		if (c.getGender() != null)
+		{
+			titleLabel.setIcon("female".equals(c.getGender()) ? Icons.FEMALE : Icons.MALE);
+			titleLabel.setHorizontalTextPosition(SwingConstants.LEFT); // icon after the name
+			titleLabel.setIconTextGap(4);
+		}
+		if (c.isShiny())
+		{
+			titleLabel.setToolTipText("Shiny");
+		}
+
+		JPanel right = new JPanel(new BorderLayout(8, 0));
+		right.setOpaque(false);
+		if (c.getLevel() != null)
+		{
+			right.add(Layout.label("Lv " + c.getLevel(), Theme.SMALL, Theme.ACCENT), BorderLayout.WEST);
+		}
+		if (party != null && !c.getId().isEmpty())
+		{
+			right.add(partyToggle(c), BorderLayout.EAST);
+		}
+
+		JPanel row = new JPanel(new BorderLayout(6, 0));
+		row.setOpaque(false);
+		row.add(titleLabel, BorderLayout.CENTER);
+		row.add(right, BorderLayout.EAST);
+		return row;
+	}
+
+	/** "Show more" / "Show less": opens or closes just this catch. */
+	private JLabel showMoreToggle(Catch c, boolean open)
+	{
+		JLabel toggle = Layout.label(open ? "Show less" : "Show more", Theme.SMALL, Theme.TEXT_FAINT);
+		toggle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		toggle.setAlignmentX(Component.LEFT_ALIGNMENT);
+		toggle.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseEntered(MouseEvent e)
+			{
+				toggle.setForeground(Theme.TEXT);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e)
+			{
+				toggle.setForeground(Theme.TEXT_FAINT);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				if (!openCatches.remove(c.getId()))
+				{
+					openCatches.add(c.getId());
+				}
+				rebuildCatchList();
+				revalidate();
+			}
+		});
+		return toggle;
+	}
+
+	/** Everything about one catch, as labelled rows; IVs and moves as two-column grids. */
+	private JPanel details(Catch c)
+	{
+		JPanel grid = new JPanel(new GridBagLayout());
+		grid.setOpaque(false);
+		int row = 0;
+
+		if (c.getCaughtWith() != null && info != null)
+		{
+			row = detail(grid, row, "Caught with", Layout.label(info.itemName(c.getCaughtWith()), Theme.SMALL, Theme.TEXT));
+		}
+		row = detail(grid, row, "Caught on", Layout.label(c.getCaughtAt() != null ? DATE.format(c.getCaughtAt()) : "Not recorded", Theme.SMALL, Theme.TEXT));
+		if (c.getThrowCount() != null)
+		{
+			row = detail(grid, row, "Throws", Layout.label(String.valueOf(c.getThrowCount()), Theme.SMALL, Theme.TEXT));
+		}
+		if (c.getNature() != null)
+		{
+			row = detail(grid, row, "Nature", Layout.label(c.getNature(), Theme.SMALL, Theme.TEXT));
+		}
+		if (c.getAbility() != null)
+		{
+			JLabel ability = Layout.label(c.getAbility() + (c.isHiddenAbility() ? " (hidden)" : ""), Theme.SMALL, c.isHiddenAbility() ? Theme.SHINY : Theme.TEXT);
+			row = detail(grid, row, "Ability", ability);
+		}
+		if (c.isShiny())
+		{
+			row = detail(grid, row, "Shiny", Layout.label("Yes", Theme.SMALL, Theme.SHINY));
+		}
+		int[] ivs = c.getIvs();
+		if (ivs != null)
+		{
+			JPanel ivGrid = twoColumns();
+			String[] names = {"Atk", "Def", "Spe", "Spc"};
+			for (int i = 0; i < 4; i++)
+			{
+				ivGrid.add(Layout.label(names[i] + "  " + ivs[i], Theme.SMALL, Theme.TEXT));
+			}
+			row = detail(grid, row, "IVs", ivGrid);
+		}
+		if (!c.getMoves().isEmpty())
+		{
+			JPanel moveGrid = twoColumns();
+			for (String move : c.getMoves())
+			{
+				moveGrid.add(Layout.label(move, Theme.SMALL, Theme.TEXT));
+			}
+			detail(grid, row, "Moves", moveGrid);
+		}
+		return grid;
+	}
+
+	/** Adds a "label  value" row to the details grid; returns the next row number. */
+	private static int detail(JPanel grid, int row, String label, JComponent value)
+	{
+		GridBagConstraints left = new GridBagConstraints();
+		left.gridx = 0;
+		left.gridy = row;
+		left.anchor = GridBagConstraints.NORTHWEST;
+		left.insets = new Insets(0, 0, 2, 8);
+		grid.add(Layout.label(label, Theme.SMALL, Theme.TEXT_FAINT), left);
+
+		GridBagConstraints right = new GridBagConstraints();
+		right.gridx = 1;
+		right.gridy = row;
+		right.weightx = 1;
+		right.fill = GridBagConstraints.HORIZONTAL;
+		right.anchor = GridBagConstraints.NORTHWEST;
+		right.insets = new Insets(0, 0, 2, 0);
+		grid.add(value, right);
+		return row + 1;
+	}
+
+	private static JPanel twoColumns()
+	{
+		JPanel panel = new JPanel(new GridLayout(0, 2, 8, 0));
+		panel.setOpaque(false);
+		return panel;
 	}
 
 	/** "+ Party" / "In party": click to add this catch to the party or take it out. */

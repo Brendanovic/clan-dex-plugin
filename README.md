@@ -1,49 +1,49 @@
 # Clan Dex
 
-A RuneLite sidebar panel for clans that run a collecting game through their Discord bot.
-Play in clan chat as usual, then open Clan Dex and press **Sync** to see everything you've
-collected, how many times, and what's still out there.
+A RuneLite sidebar panel for clans that run a collecting game through their Discord bot. Members
+play in clan chat as usual; Clan Dex shows them what they've collected, their party and their bag.
 
-**It only works for members of a clan that runs the matching bot.** You need your clan's key.
+**It only works for members of a clan that runs the matching bot, and needs that clan's key.**
+Reviewers and anyone curious can try every feature with the built-in demo: see [DEMO.md](DEMO.md).
 
 ## Features
 
-- A progress card: entries collected, completion %, and total catches.
-- Search, All / Caught / Missing tabs, and sorting by number, name or most caught.
-- Rows animate in and out as you filter, and the list cascades in after each sync.
-- Click an entry to see every catch of it, numbered like the bot does (Moroka #001, #002...):
-  shiny or not, level, gender, nature, ability (gold if it's the rare hidden one), ball, throws,
-  date and IVs.
-  Right-click to copy its name.
-- Shinies get their own sprite and a gold sparkle, and a **Shiny** filter.
-- A **Party** tab: pick up to 6 of your Creature ("+ Party" on any catch) to see their level, HP,
-  stats and moves. Your party is saved in your RuneLite settings.
-- A **Bag** tab shows your unlimited Basic Orbs and the items you've found.
-- A wrong clan key is caught straight away, and shows nothing.
-- Entry pictures come from your clan's bot: shown in full once caught, as a silhouette until then.
-  If your clan's bot doesn't provide pictures, entries are listed by name only.
+- **Progress card:** entries collected, completion %, total catches and shinies.
+- **Dex:** every entry, with search, All / Caught / Missing / Shiny filters, and sorting by number,
+  name or most caught. Rows animate in and out as you filter, and the list settles in after each sync.
+- **Each catch:** click an entry to see every catch of it (Name #001, #002...) with its gender and
+  level. **Show more** opens its details: what it was caught with, when, throws, nature, ability
+  (gold if hidden), IVs and moves. Right-click an entry to copy its name.
+- **Shinies** get their own picture, a gold sparkle and their own filter.
+- **Party:** press **+ Party** on up to 6 catches to see their level, HP, stats and moves. The party
+  is saved in your RuneLite settings.
+- **Bag:** anything your clan's game gives without limit, then the items you've found.
+- **Pictures and wording** come from your clan's bot (for example its word for an entry), with
+  neutral defaults. Pictures, if it provides them, show in full once caught and as a silhouette until
+  then; without them, entries are listed by name.
 - A settings cog in the panel, and a **Panel width** setting for a wider, two-column view.
 
 ## Settings
 
 | Setting | What it does |
 | --- | --- |
-| Clan key | Your clan's shared key. Ask in your clan's Discord. |
+| Clan key | Your clan's shared key. Ask in your clan's Discord. A wrong key shows nothing. |
 | Panel width | Standard, Wide or Extra wide |
-| Name override | Look up someone else instead of your logged-in name |
-| Dex data URL | Where your clan's bot publishes the data (preset for our clan) |
+| Name override | Look up another name instead of your logged-in one |
+| Dex data URL | Where your clan's bot publishes the data (preset for our clan; a gist page link works too) |
 
-## Privacy
+## Privacy and network use
 
-- Sync only runs when you press it, with a 30-second cooldown. The plugin never sends chat or
-  Discord messages for you.
-- Pressing Sync downloads one file from the **Dex data URL**. That host can see your IP address,
-  as with any download. Nothing about you is uploaded.
-- Entry pictures, if your clan's bot provides them, are downloaded from the address it lists.
-- The file contains no player names. Each player is listed under a code made from their name
-  and the clan key, so without the key the file can't be matched to anyone.
+- The plugin only **reads**. It never sends chat or Discord messages, and never uploads anything.
+- **Sync** runs only when you press it, with a 30-second cooldown. It downloads one file from the
+  **Dex data URL** (a GitHub gist for our clan) and the pictures that file links to (from GitHub).
+  Those hosts can see your IP address, as with any download.
+- The file holds no readable player names: each player is listed under a code made from their name
+  and the clan key, and the clan's player list is encrypted with that key. Without the key, the
+  file can't be matched to anyone.
+- Your party is stored only in your own RuneLite settings, under a code rather than your name.
 
 ## Developing
 
-See [CLAUDE.md](CLAUDE.md) for the architecture, the data format shared with the bot,
-the rules, and how to run a dev client.
+See [CLAUDE.md](CLAUDE.md) for the architecture, the data format shared with the bot, the rules,
+and how to run a dev client. `./gradlew test` runs the tests.

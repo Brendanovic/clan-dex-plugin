@@ -15,9 +15,9 @@ import javax.swing.SwingConstants;
  * The Bag tab: every item the player holds, with its picture (if the bot links one) and count.
  *
  * <pre>
- *  [pic] Basic Orb        Unlimited    <- always first: every player has unlimited Basic Orbs
- *  [pic] Great Orb              x2
- *  [pic] Level Treat              x1
+ *  [pic] Basic Orb        Unlimited    <- always first: the bot's display.unlimitedItems
+ *  [pic] Great Orb               x2
+ *  [pic] Level Treat             x1
  * </pre>
  */
 class BagPanel extends JPanel
@@ -40,17 +40,19 @@ class BagPanel extends JPanel
 		add(message, BorderLayout.CENTER);
 	}
 
-	/** Shows the player's bag from the latest sync, starting with their unlimited Basic Orbs. */
+	/** Shows the player's bag from the latest sync, starting with the items every player has without limit. */
 	void setBag(DexInfo info, PlayerDex player)
 	{
 		list.removeAll();
-		list.add(itemRow(info, DexInfo.UNLIMITED_BALL, "Basic Orb", "Unlimited"));
+		info.getUnlimitedItems().forEach((id, name) -> list.add(itemRow(info, id, name, "Unlimited")));
 		Map<String, Integer> bag = player.getBag();
 		for (Map.Entry<String, Integer> item : bag.entrySet())
 		{
 			list.add(itemRow(info, item.getKey(), info.itemName(item.getKey()), "x" + item.getValue()));
 		}
-		message.setText("No other items yet - you sometimes find one after a catch");
+		message.setText(info.getUnlimitedItems().isEmpty()
+			? "No items yet - you sometimes find one after a catch"
+			: "No other items yet - you sometimes find one after a catch");
 		message.setVisible(bag.isEmpty());
 		revalidate();
 		repaint();

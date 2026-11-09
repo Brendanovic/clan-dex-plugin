@@ -40,9 +40,9 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `SyncResult.java` | Immutable result of one sync: `DexInfo` + `PlayerDex`, no entry, or an error |
 | `DexInfo.java` | File-level data: entry names, sprite / shiny / item picture links, item names |
 | `PlayerDex.java` | One player's data: catch counts, each `Catch`, and their bag |
-| `Catch.java` | One caught Creature: id, number, entry, shiny, gender, nature, ability, date, ball, throws, level, IVs (details may be missing) |
+| `Catch.java` | One catch: id, number, entry, shiny, gender, nature, ability, date, ball, throws, level, IVs (details may be missing) |
 | `ui/ClanDexPanel.java` | The panel: title bar, sync, Dex / Bag tabs; Dex has search, filters (incl. Shiny), sort, list/skeleton |
-| `ui/BagPanel.java` | The Bag tab: unlimited Basic Orbs, then items with pictures and counts |
+| `ui/BagPanel.java` | The Bag tab: the unlimited free ball, then items with pictures and counts |
 | `ui/PartyPanel.java` | The Party tab: up to 6 cards with sprite, level, HP bar, stats, moves |
 | `ui/PartyStore.java` / `ui/PartyControl.java` | Where the party is saved (RuneLite settings, per player) / how catch lines add to it |
 | `ui/TabBar.java` | Flat tab row used for Dex / Bag and the filters |
@@ -60,7 +60,7 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `src/test/.../stats/StatFormulasTest.java` | Gen 1 worked examples; picking formulas by name |
 | `src/test/.../DexKeyTest.java` | Checks the hash matches a value produced by the bot |
 | `src/test/.../DexClientTest.java` | Gist link handling; reading formats 2 and 3, catches, bag, items |
-| `dev/dex.sample.json` | Committed sample data: made-up names, catches (2 shiny) and a bag; no pictures |
+| `dev/dex.sample.json` | Committed sample data: made-up names, catches and a bag; no pictures |
 | `dev/dex.local.json` | **Gitignored** sample with the real names and sprites (see Dev workflow) |
 | `icon.png` | Plugin Hub icon (48x72), the same ball as `Icons.NAV` |
 
@@ -103,8 +103,10 @@ bumping `version` (`DexClient.SUPPORTED_VERSION`).
   optional `mons` (each catch; see `Catch.java`, every detail but `dex` may be missing) and `bag`
   (item id to count). A catch's `no` is the player's number for it within its species (#001,
   #002...); the catch list is ordered by it and shows it, because the bot's commands use it
-  (`--rarecandy moroka 2`). `basic-orb` is unlimited for every player: any count of it in a bag
-  is ignored, and the Bag tab always shows it first as "Unlimited" (`DexInfo.UNLIMITED_BALL`). Top-level `spriteShiny`, `items` and `itemSprite` are optional too. The
+  (e.g. its level-up command). The bot's `display` object fills in game-specific UI: `display.unlimitedItems` (`[{ id, name }]`)
+  are shown first in the Bag as "Unlimited" with any count ignored, and `display.terms.entry` /
+  `entries` are the on-screen words for an entry (`DexInfo.entry()` / `entries()`, defaulting to
+  "entry" / "entries"). The plugin never names game things itself; new display settings go there.
   plugin **ignores every field it doesn't know** (`rev`, and anything the bot adds later such as a
   nickname), so the bot can add fields without a plugin update. Only breaking changes bump
   `version`. Format 2 (`"dex": { key: { index: count } }`) is still read, for a bot that hasn't

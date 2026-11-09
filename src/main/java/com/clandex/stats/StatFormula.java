@@ -1,7 +1,7 @@
 package com.clandex.stats;
 
 /**
- * Turns a caught Creature's numbers into its stats. One implementation per rule set; the clan's bot
+ * Turns a catch's numbers into its stats. One implementation per rule set; the clan's bot
  * names the one to use in its file ("statFormula"), and {@link StatFormulas} looks it up.
  *
  * <p>To add a formula: write a class implementing this, give it a name, and register it in

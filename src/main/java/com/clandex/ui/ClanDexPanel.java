@@ -257,7 +257,7 @@ public class ClanDexPanel extends PluginPanel
 		loadParty(info, player);
 
 		lastSynced = Instant.now();
-		setStatus(result.isNoEntry() ? "No entries yet - play in clan chat to start" : "Synced just now", false);
+		setStatus(result.isNoEntry() ? "No " + info.entries() + " yet - play in clan chat to start" : "Synced just now", false);
 		refreshSyncControls();
 		revealList(true);
 	}

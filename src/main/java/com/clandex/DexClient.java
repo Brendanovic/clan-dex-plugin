@@ -195,11 +195,11 @@ class DexClient
 			}
 		}
 
-		// bag in the bot's item order, then any items it didn't list. Basic Orbs are unlimited, so
-		// any count of them in the data is ignored; the Bag tab always shows them as unlimited.
+		// bag in the bot's item order, then any items it didn't list. Unlimited items (display) are
+		// never counted: the Bag tab always shows them first as unlimited.
 		Map<String, Integer> bag = new LinkedHashMap<>();
 		JsonObject rawBag = object(record, "bag");
-		rawBag.remove(DexInfo.UNLIMITED_BALL);
+		info.getUnlimitedItems().keySet().forEach(rawBag::remove);
 		for (String id : info.getItemNames().keySet())
 		{
 			if (rawBag.has(id) && rawBag.get(id).getAsInt() > 0)
@@ -242,6 +242,10 @@ class DexClient
 				new int[]{intOr(s, "hp", 0), intOr(s, "atk", 0), intOr(s, "def", 0), intOr(s, "spe", 0), intOr(s, "spc", 0)});
 		}
 
+		// display settings: what the plugin shows in game terms, all optional with neutral fallbacks
+		JsonObject display = object(root, "display");
+		JsonObject terms = object(display, "terms");
+
 		// names the clan key can't decrypt are left out, never shown scrambled
 		Map<String, String> members = new LinkedHashMap<>();
 		if (clanKey != null)
@@ -257,7 +261,7 @@ class DexClient
 		}
 
 		return new DexInfo(names, httpsLink(root, "sprite"), httpsLink(root, "spriteShiny"), httpsLink(root, "itemSprite"), itemNames,
-			baseStats, members, text(root, "statFormula"));
+			baseStats, members, text(root, "statFormula"), unlimitedItems(display), text(terms, "entry"), text(terms, "entries"));
 	}
 
 	/** One entry of a player's "mons" list, or null if it's unusable. Missing details stay null. */
@@ -300,6 +304,25 @@ class DexClient
 			mon.has("level") ? mon.get("level").getAsInt() : null,
 			ivs,
 			readMoves(mon));
+	}
+
+	/** display.unlimitedItems as id -> name, in the bot's order. */
+	private static Map<String, String> unlimitedItems(JsonObject display)
+	{
+		Map<String, String> items = new LinkedHashMap<>();
+		if (display.has("unlimitedItems") && display.get("unlimitedItems").isJsonArray())
+		{
+			for (JsonElement element : display.getAsJsonArray("unlimitedItems"))
+			{
+				JsonObject item = element.getAsJsonObject();
+				String id = text(item, "id");
+				if (id != null)
+				{
+					items.put(id, text(item, "name") != null ? text(item, "name") : id);
+				}
+			}
+		}
+		return items;
 	}
 
 	private static List<String> readMoves(JsonObject mon)

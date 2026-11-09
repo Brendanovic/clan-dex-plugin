@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * One caught Creature, as the clan's bot records it. Every field except the entry and shiny flag can
+ * One catch, as the clan's bot records it. Every field except the entry and shiny flag can
  * be missing (older bot versions recorded less), so the UI shows only what is there. Fields the bot
  * adds later are simply not read here.
  */
@@ -56,7 +56,7 @@ public final class Catch
 		return id;
 	}
 
-	/** The player's number for this catch within its species, e.g. 2 for their second Moroka; null if unknown. */
+	/** The player's number for this catch within its species, e.g. 2 for their second of that entry; null if unknown. */
 	public Integer getNumber()
 	{
 		return number;
