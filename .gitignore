@@ -1,0 +1,15 @@
+.gradle
+build
+.idea/
+.project
+.settings/
+.classpath
+nbactions.xml
+nb-configuration.xml
+nbproject/
+.DS_Store
+*.iml
+out/
+
+# local test data and previews with real names and sprites; never commit (see CLAUDE.md)
+dev/*.local*
