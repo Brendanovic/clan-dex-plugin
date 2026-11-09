@@ -1,67 +1,47 @@
 package com.clandex;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 /**
- * The outcome of one sync: the entry list plus this player's catches, a "no entries yet"
- * result, or an error. Immutable, so it can be handed from the network thread to Swing safely.
+ * The outcome of one sync: the game info plus this player's data, a "no entries yet" result, or an
+ * error. Immutable, so it can be handed from the network thread to Swing safely.
  */
 public final class SyncResult
 {
-	/** Entry names in dex order, as published by the bot. Empty on error. */
-	private final List<String> names;
+	private final DexInfo info;      // null on error
+	private final PlayerDex player;  // PlayerDex.EMPTY when not found or on error
+	private final boolean noEntry;   // the file was read but this player isn't in it yet
+	private final String error;      // a short message for the panel, or null
 
-	/** Entry index (0 = #001) to how many times it was caught. Empty if nothing caught. */
-	private final Map<Integer, Integer> caught;
-
-	/** Link pattern for entry images, with {n} for the 1-based number. Null if the bot sends none. */
-	private final String spriteTemplate;
-
-	/** True when the file was read but this player isn't in it yet. */
-	private final boolean noEntry;
-
-	/** A short message for the panel when the sync failed, otherwise null. */
-	private final String error;
-
-	private SyncResult(List<String> names, String spriteTemplate, Map<Integer, Integer> caught, boolean noEntry, String error)
+	private SyncResult(DexInfo info, PlayerDex player, boolean noEntry, String error)
 	{
-		this.names = Collections.unmodifiableList(names);
-		this.spriteTemplate = spriteTemplate;
-		this.caught = Collections.unmodifiableMap(caught);
+		this.info = info;
+		this.player = player;
 		this.noEntry = noEntry;
 		this.error = error;
 	}
 
-	static SyncResult found(List<String> names, String spriteTemplate, Map<Integer, Integer> caught)
+	static SyncResult found(DexInfo info, PlayerDex player)
 	{
-		return new SyncResult(names, spriteTemplate, caught, false, null);
+		return new SyncResult(info, player, false, null);
 	}
 
-	static SyncResult noEntry(List<String> names, String spriteTemplate)
+	static SyncResult noEntry(DexInfo info)
 	{
-		return new SyncResult(names, spriteTemplate, Collections.emptyMap(), true, null);
+		return new SyncResult(info, PlayerDex.EMPTY, true, null);
 	}
 
 	static SyncResult failed(String error)
 	{
-		return new SyncResult(Collections.emptyList(), null, Collections.emptyMap(), false, error);
+		return new SyncResult(null, PlayerDex.EMPTY, false, error);
 	}
 
-	public List<String> getNames()
+	public DexInfo getInfo()
 	{
-		return names;
+		return info;
 	}
 
-	public String getSpriteTemplate()
+	public PlayerDex getPlayer()
 	{
-		return spriteTemplate;
-	}
-
-	public Map<Integer, Integer> getCaught()
-	{
-		return caught;
+		return player;
 	}
 
 	public boolean isNoEntry()

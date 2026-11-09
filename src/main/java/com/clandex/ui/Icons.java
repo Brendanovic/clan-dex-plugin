@@ -25,6 +25,9 @@ public final class Icons
 	/** Sidebar button: a teal-and-cream ball with a gold button. */
 	public static final BufferedImage NAV = ball(16);
 
+	/** Marks a shiny: a small gold four-pointed sparkle. */
+	static final ImageIcon SHINY = new ImageIcon(sparkle(12, Theme.SHINY));
+
 	/** Header button that opens the plugin's settings. */
 	static final ImageIcon COG = new ImageIcon(cog(14, Theme.ICON));
 	static final ImageIcon COG_HOVER = new ImageIcon(cog(14, Theme.ICON_HOVER));
@@ -60,6 +63,22 @@ public final class Icons
 		g.fillOval(5, 5, 6, 6);
 		g.setColor(BALL_LINE);
 		g.drawOval(5, 5, 6, 6);
+		g.dispose();
+		return img;
+	}
+
+	private static BufferedImage sparkle(int size, Color color)
+	{
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = start(img);
+		Path2D star = new Path2D.Double();
+		star.moveTo(8, 0);
+		star.quadTo(9, 7, 16, 8);
+		star.quadTo(9, 9, 8, 16);
+		star.quadTo(7, 9, 0, 8);
+		star.quadTo(7, 7, 8, 0);
+		g.setColor(color);
+		g.fill(star);
 		g.dispose();
 		return img;
 	}

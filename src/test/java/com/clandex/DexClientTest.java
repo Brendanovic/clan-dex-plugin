@@ -46,15 +46,16 @@ public class DexClientTest
 		SyncResult r = client.parse("{\"version\":3," + NAMES + ",\"players\":{\"" + KEY + "\":"
 			+ "{\"rev\":4,\"dex\":{\"1\":2},\"bag\":{\"potion\":3},\"region\":\"caves\"}}}", KEY);
 		assertEquals(null, r.getError());
-		assertEquals(1, r.getCaught().size());
-		assertEquals(Integer.valueOf(2), r.getCaught().get(1));
+		assertEquals(1, r.getPlayer().getCaught().size());
+		assertEquals(Integer.valueOf(2), r.getPlayer().getCaught().get(1));
 	}
 
 	@Test
 	public void stillReadsFormat2()
 	{
 		SyncResult r = client.parse("{\"version\":2," + NAMES + ",\"dex\":{\"" + KEY + "\":{\"0\":1}}}", KEY);
-		assertEquals(Integer.valueOf(1), r.getCaught().get(0));
+		assertEquals(Integer.valueOf(1), r.getPlayer().getCaught().get(0));
+		assertTrue(r.getPlayer().getCatches().isEmpty());
 	}
 
 	@Test
@@ -67,5 +68,52 @@ public class DexClientTest
 	public void newerFormatAsksForAnUpdate()
 	{
 		assertEquals("Update the plugin to read the new dex", client.parse("{\"version\":4," + NAMES + "}", KEY).getError());
+	}
+
+	@Test
+	public void readsCatchesBagShinyAndItems()
+	{
+		SyncResult r = client.parse("{\"version\":3," + NAMES
+			+ ",\"sprite\":\"https://x/{n}.png\",\"spriteShiny\":\"https://x/shiny/{n}.png\""
+			+ ",\"itemSprite\":\"http://not-https/{id}.png\""
+			+ ",\"items\":{\"basic-orb\":{\"name\":\"Basic Orb\"},\"level-treat\":{\"name\":\"Level Treat\"}}"
+			+ ",\"players\":{\"" + KEY + "\":{\"rev\":3,\"dex\":{\"1\":2}"
+			+ ",\"mons\":["
+			+ "{\"id\":\"aaaa111111\",\"no\":1,\"dex\":1,\"shiny\":true,\"gender\":\"female\",\"nature\":\"Adamant\",\"ability\":\"Venvenlo Quatumo\",\"hiddenAbility\":true,\"caughtAt\":\"2026-11-09T01:11:52.595Z\","
+			+ "\"caughtWith\":\"basic-orb\",\"throws\":3,\"level\":14,\"ivs\":{\"atk\":2,\"def\":5,\"spe\":5,\"spc\":9},\"nickname\":\"later field\"},"
+			+ "{\"id\":\"bbbb222222\",\"dex\":1,\"shiny\":false,\"caughtAt\":null}]"
+			+ ",\"bag\":{\"level-treat\":1,\"basic-orb\":2,\"mystery\":1}}}}", KEY);
+
+		DexInfo info = r.getInfo();
+		assertEquals("https://x/shiny/{n}.png", info.getShinySpriteTemplate());
+		assertEquals(null, info.getItemSpriteTemplate());           // not https, so not used
+		assertEquals("Level Treat", info.itemName("level-treat"));
+		assertEquals("Mystery", info.itemName("mystery"));          // unknown id made readable
+
+		PlayerDex p = r.getPlayer();
+		assertEquals(2, p.getCatches().size());
+		assertEquals(1, p.shinyCount());
+		Catch shiny = p.getCatches().get(0);
+		assertTrue(shiny.isShiny());
+		assertEquals(Integer.valueOf(14), shiny.getLevel());
+		assertEquals(Integer.valueOf(1), shiny.getNumber());
+		assertEquals("female", shiny.getGender());
+		assertEquals("Adamant", shiny.getNature());
+		assertEquals("Venvenlo Quatumo", shiny.getAbility());
+		assertTrue(shiny.isHiddenAbility());
+		assertEquals(Integer.valueOf(3), shiny.getThrowCount());
+		assertEquals("basic-orb", shiny.getCaughtWith());
+		assertEquals(9, shiny.getIvs()[3]);
+		assertEquals(java.time.Instant.parse("2026-11-09T01:11:52.595Z"), shiny.getCaughtAt());
+		Catch old = p.getCatches().get(1);
+		assertEquals(null, old.getCaughtAt());
+		assertEquals(null, old.getLevel());
+		assertEquals(null, old.getIvs());
+		assertEquals(null, old.getNumber());
+		assertEquals(null, old.getGender());
+		assertEquals(null, old.getNature());
+
+		// bag follows the bot's item order, unknown items last; Basic Orbs are unlimited, so never counted
+		assertEquals(java.util.Arrays.asList("level-treat", "mystery"), new java.util.ArrayList<>(p.getBag().keySet()));
 	}
 }

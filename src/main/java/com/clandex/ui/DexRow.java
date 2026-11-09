@@ -1,14 +1,23 @@
 package com.clandex.ui;
 
+import com.clandex.Catch;
+import com.clandex.DexInfo;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.awt.image.BufferedImage;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -16,6 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -23,19 +33,27 @@ import javax.swing.Timer;
  * One entry in the list.
  *
  * <pre>
- *  [sprite] #025  Name                   x3      <- always visible
- *  [ big  ]  Name                                <- detail card, slides open on click
- *  [sprite]  Caught 3 times
+ *  [sprite] #025  Name                 * x3     <- always visible (* = owns a shiny)
+ *  [ big  ]  Name                               <- detail card, slides open on click
+ *  [sprite]  Caught 3 times (1 shiny)
  *            Your most caught
+ *  [s] Moroka #001                     Lv 14   <- one block per catch, by the player's number
+ *      Male, Great Orb, 3 throws                  for it ("--rarecandy moroka 1" uses it)
+ *      Adamant nature, Static
+ *      9 Nov 2026, 01:11, IVs 2/5/5/9
  * </pre>
  *
- * Caught entries are bright, with their sprite in full; missing ones are dimmed, with a dark
- * silhouette. If the clan's bot sends no sprites, rows show names only, with no gap.
+ * Caught entries are bright with their sprite in full (the shiny sprite if they own a shiny);
+ * missing ones are dimmed silhouettes. If the clan's bot sends no sprites, rows show names only.
  * Right-click offers "Copy name".
  */
 class DexRow extends JPanel
 {
 	private static final int FRAME_MS = 15;
+	private static final DateTimeFormatter DATE = DateTimeFormatter.ofPattern("d MMM yyyy, HH:mm").withZone(ZoneId.systemDefault());
+
+	/** By the player's number for each catch (#001, #002...), the order the bot uses too. */
+	private static final Comparator<Catch> CATCH_ORDER = Comparator.comparing(Catch::getNumber, Comparator.nullsLast(Comparator.naturalOrder()));
 
 	private final int index;
 	private final String name;
@@ -46,28 +64,33 @@ class DexRow extends JPanel
 	private final JLabel nameLabel = new JLabel();
 	private final JLabel countLabel = new JLabel();
 
-	private final JPanel detail = new JPanel(new BorderLayout(10, 0));
+	private final JPanel detail = new JPanel();
 	private final JLabel bigSprite = new JLabel();
 	private final JLabel detailName = new JLabel();
 	private final JLabel detailCount = new JLabel();
 	private final JLabel detailNote = new JLabel();
+	private final JPanel catchList = new JPanel();
 
 	/** Animates the detail card open and closed; 0 = closed, 1 = open. */
 	private final Timer slider = new Timer(FRAME_MS, e -> slideStep());
 	private float openness;
 	private boolean expanded;
-
-	private int count;
 	private boolean hovered;
 
-	/** Whether this row shows a picture: false when the bot sends no sprites. */
+	private int count;
+	private List<Catch> catches = Collections.emptyList();
+	private DexInfo info;
+
+	/** Whether this row shows pictures: false when the bot sends no sprites. */
 	private boolean spritesOn;
 
-	/** The sprite prepared at both sizes, caught and not caught; null until it has downloaded. */
+	// pictures, prepared once when they download; null until then
 	private ImageIcon spriteCaught;
 	private ImageIcon spriteMissing;
 	private ImageIcon spriteCaughtLarge;
 	private ImageIcon spriteMissingLarge;
+	private ImageIcon shinySprite;
+	private ImageIcon shinySpriteLarge;
 
 	DexRow(int index, String name)
 	{
@@ -83,7 +106,7 @@ class DexRow extends JPanel
 
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		addMouseListener(new RowMouse());
-		setCount(0, false);
+		setPlayerData(0, false, Collections.emptyList(), null);
 	}
 
 	/** Formats an index as its dex number, e.g. 24 becomes "#025". */
@@ -112,6 +135,11 @@ class DexRow extends JPanel
 		return count > 0;
 	}
 
+	boolean hasShiny()
+	{
+		return catches.stream().anyMatch(Catch::isShiny);
+	}
+
 	/** True if the name or number contains {@code query}, which must already be lower case. */
 	boolean matches(String query)
 	{
@@ -119,22 +147,27 @@ class DexRow extends JPanel
 	}
 
 	/**
-	 * Updates the row for how many times this entry was caught (0 = not yet).
-	 * {@code mostCaught} marks the player's most-caught entry in the detail card.
+	 * Updates the row from the latest sync: how many times this entry was caught, whether it is
+	 * the player's most caught, and each individual catch of it (may be empty if the bot doesn't
+	 * send them). {@code info} names the balls.
 	 */
-	void setCount(int timesCaught, boolean mostCaught)
+	void setPlayerData(int timesCaught, boolean mostCaught, List<Catch> catchesOfThis, DexInfo info)
 	{
-		count = timesCaught;
+		this.count = timesCaught;
+		this.info = info;
+		this.catches = new ArrayList<>(catchesOfThis);
+		this.catches.sort(CATCH_ORDER);
 		boolean caught = timesCaught > 0;
+		long shinies = catches.stream().filter(Catch::isShiny).count();
 
 		number.setForeground(caught ? Theme.TEXT_MUTED : Theme.TEXT_FAINT);
 		nameLabel.setForeground(caught ? Theme.TEXT : Theme.TEXT_FAINT);
 		countLabel.setText(timesCaught > 1 ? "x" + timesCaught : "");
+		countLabel.setIcon(shinies > 0 ? Icons.SHINY : null);
 
 		detailName.setForeground(caught ? Theme.TEXT : Theme.TEXT_MUTED);
-		detailCount.setText(caught
-			? "Caught " + timesCaught + (timesCaught == 1 ? " time" : " times")
-			: "Not caught yet");
+		detailCount.setText(!caught ? "Not caught yet"
+			: "Caught " + timesCaught + (timesCaught == 1 ? " time" : " times") + (shinies > 0 ? " (" + shinies + " shiny)" : ""));
 		detailNote.setText(mostCaught ? "Your most caught" : caught ? " " : "Still out there");
 		detailNote.setForeground(mostCaught ? Theme.ACCENT : Theme.TEXT_FAINT);
 
@@ -143,17 +176,17 @@ class DexRow extends JPanel
 	}
 
 	/**
-	 * Turns pictures on (a sprite is on its way) or off (names only). Either way any old sprite
-	 * is dropped; while one downloads, a blank placeholder holds its space.
+	 * Turns pictures on (sprites are on their way) or off (names only). Either way any old
+	 * pictures are dropped; while one downloads, a blank placeholder holds its space.
 	 */
 	void useSprites(boolean on)
 	{
 		spritesOn = on;
-		spriteCaught = spriteMissing = spriteCaughtLarge = spriteMissingLarge = null;
+		spriteCaught = spriteMissing = spriteCaughtLarge = spriteMissingLarge = shinySprite = shinySpriteLarge = null;
 		refreshPictures();
 	}
 
-	/** Shows the entry's sprite once it has downloaded. Prepared once, at both sizes. */
+	/** The entry's normal sprite, once it has downloaded. Prepared once, at both sizes. */
 	void setSprite(BufferedImage image)
 	{
 		if (!spritesOn)
@@ -168,25 +201,17 @@ class DexRow extends JPanel
 		refreshPictures();
 	}
 
-	private void refreshPictures()
+	/** The entry's shiny sprite, once it has downloaded (only asked for if the player owns one). */
+	void setShinySprite(BufferedImage image)
 	{
-		boolean caught = isCaught();
 		if (!spritesOn)
 		{
-			number.setIcon(null);
-			bigSprite.setIcon(null);
+			return;
 		}
-		else if (spriteCaught == null)
-		{
-			number.setIcon(Sprites.PLACEHOLDER);
-			bigSprite.setIcon(Sprites.PLACEHOLDER_LARGE);
-		}
-		else
-		{
-			number.setIcon(caught ? spriteCaught : spriteMissing);
-			bigSprite.setIcon(caught ? spriteCaughtLarge : spriteMissingLarge);
-		}
-		bigSprite.setVisible(spritesOn);
+		BufferedImage trimmed = Sprites.trim(image);
+		shinySprite = Sprites.render(trimmed, Theme.SPRITE, true);
+		shinySpriteLarge = Sprites.render(trimmed, Theme.SPRITE_LARGE, true);
+		refreshPictures();
 	}
 
 	/** Closes the detail card without animating (used when the list is rebuilt or filtered). */
@@ -196,6 +221,114 @@ class DexRow extends JPanel
 		openness = 0f;
 		slider.stop();
 		revalidate();
+	}
+
+	// ---------------------------------------------------------------- pictures
+
+	/** Puts the right picture everywhere: header, detail card and each catch line. */
+	private void refreshPictures()
+	{
+		boolean showShiny = hasShiny() && shinySprite != null;
+		number.setIcon(pick(showShiny ? shinySprite : isCaught() ? spriteCaught : spriteMissing, Sprites.PLACEHOLDER));
+		bigSprite.setIcon(pick(showShiny ? shinySpriteLarge : isCaught() ? spriteCaughtLarge : spriteMissingLarge, Sprites.PLACEHOLDER_LARGE));
+		bigSprite.setVisible(spritesOn);
+		rebuildCatchList();
+	}
+
+	/** The picture if pictures are on and it has loaded, a blank placeholder while loading, or none. */
+	private ImageIcon pick(ImageIcon loaded, ImageIcon placeholder)
+	{
+		if (!spritesOn)
+		{
+			return null;
+		}
+		return loaded != null ? loaded : placeholder;
+	}
+
+	// ---------------------------------------------------------------- catch list
+
+	private void rebuildCatchList()
+	{
+		catchList.removeAll();
+		for (Catch c : catches)
+		{
+			catchList.add(catchLine(c));
+		}
+		if (openness > 0)
+		{
+			revalidate(); // the card's height changed while it is showing
+		}
+	}
+
+	private JPanel catchLine(Catch c)
+	{
+		String title = name + (c.getNumber() != null ? String.format(" #%03d", c.getNumber()) : "") + (c.isShiny() ? "  Shiny" : "");
+
+		List<String> how = new ArrayList<>();
+		if (c.getGender() != null)
+		{
+			how.add(c.getGender().equals("female") ? "Female" : "Male");
+		}
+		if (c.getCaughtWith() != null && info != null)
+		{
+			how.add(info.itemName(c.getCaughtWith()));
+		}
+		if (c.getThrowCount() != null)
+		{
+			how.add(c.getThrowCount() + (c.getThrowCount() == 1 ? " throw" : " throws"));
+		}
+
+		List<String> traits = new ArrayList<>();
+		if (c.getNature() != null)
+		{
+			traits.add(c.getNature() + " nature");
+		}
+		if (c.getAbility() != null)
+		{
+			traits.add(c.getAbility() + (c.isHiddenAbility() ? " (hidden ability)" : ""));
+		}
+
+		List<String> when = new ArrayList<>();
+		when.add(c.getCaughtAt() != null ? DATE.format(c.getCaughtAt()) : "Date not recorded");
+		int[] ivs = c.getIvs();
+		if (ivs != null)
+		{
+			when.add("IVs " + ivs[0] + "/" + ivs[1] + "/" + ivs[2] + "/" + ivs[3]);
+		}
+
+		JPanel titleRow = new JPanel(new BorderLayout(6, 0));
+		titleRow.setOpaque(false);
+		titleRow.add(Layout.label(title, Theme.SMALL, c.isShiny() ? Theme.SHINY : Theme.TEXT), BorderLayout.CENTER);
+		if (c.getLevel() != null)
+		{
+			titleRow.add(Layout.label("Lv " + c.getLevel(), Theme.SMALL, Theme.ACCENT), BorderLayout.EAST);
+		}
+
+		JPanel text = new JPanel();
+		text.setOpaque(false);
+		text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
+		text.add(Layout.fullWidth(titleRow));
+		if (!how.isEmpty())
+		{
+			text.add(Layout.label(String.join(", ", how), Theme.SMALL, Theme.TEXT_MUTED));
+		}
+		if (!traits.isEmpty())
+		{
+			text.add(Layout.label(String.join(", ", traits), Theme.SMALL, c.isHiddenAbility() ? Theme.SHINY : Theme.TEXT_MUTED));
+		}
+		text.add(Layout.label(String.join(", ", when), Theme.SMALL, Theme.TEXT_FAINT));
+
+		JLabel picture = new JLabel(pick(c.isShiny() ? shinySprite : spriteCaught, Sprites.PLACEHOLDER));
+		picture.setVerticalAlignment(SwingConstants.TOP);
+
+		JPanel line = new JPanel(new BorderLayout(6, 0));
+		line.setOpaque(false);
+		line.setAlignmentX(Component.LEFT_ALIGNMENT);
+		line.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
+		line.setToolTipText(c.getId().isEmpty() ? null : "Catch id " + c.getId());
+		line.add(picture, BorderLayout.WEST);
+		line.add(text, BorderLayout.CENTER);
+		return line;
 	}
 
 	// ---------------------------------------------------------------- layout
@@ -214,6 +347,7 @@ class DexRow extends JPanel
 
 		countLabel.setFont(Theme.SMALL);
 		countLabel.setForeground(Theme.ACCENT);
+		countLabel.setIconTextGap(4);
 
 		header.add(number, BorderLayout.WEST);
 		header.add(nameLabel, BorderLayout.CENTER);
@@ -223,6 +357,7 @@ class DexRow extends JPanel
 	private void buildDetail()
 	{
 		detail.setOpaque(false);
+		detail.setLayout(new BoxLayout(detail, BoxLayout.Y_AXIS));
 		detail.setBorder(BorderFactory.createEmptyBorder(2, 6, 8, 8));
 
 		Layout.style(detailName, Theme.TITLE, Theme.TEXT).setText(name);
@@ -237,14 +372,30 @@ class DexRow extends JPanel
 		text.add(detailCount);
 		text.add(detailNote);
 
-		detail.add(bigSprite, BorderLayout.WEST);
-		detail.add(text, BorderLayout.CENTER);
+		JPanel summary = new JPanel(new BorderLayout(10, 0));
+		summary.setOpaque(false);
+		summary.setAlignmentX(Component.LEFT_ALIGNMENT);
+		summary.add(bigSprite, BorderLayout.WEST);
+		summary.add(text, BorderLayout.CENTER);
+
+		catchList.setOpaque(false);
+		catchList.setLayout(new BoxLayout(catchList, BoxLayout.Y_AXIS));
+		catchList.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+		detail.add(summary);
+		detail.add(catchList);
+	}
+
+	/** Full height of the detail card: grows with the number of catches. */
+	private int detailHeight()
+	{
+		return detail.getPreferredSize().height;
 	}
 
 	@Override
 	public Dimension getPreferredSize()
 	{
-		return new Dimension(0, Theme.ROW_HEIGHT + Math.round(Theme.DETAIL_HEIGHT * openness));
+		return new Dimension(0, Theme.ROW_HEIGHT + Math.round(detailHeight() * openness));
 	}
 
 	@Override
@@ -252,7 +403,7 @@ class DexRow extends JPanel
 	{
 		// the detail card keeps its full height and is simply cut off while the row is shorter
 		header.setBounds(0, 0, getWidth(), Theme.ROW_HEIGHT);
-		detail.setBounds(0, Theme.ROW_HEIGHT, getWidth(), Theme.DETAIL_HEIGHT);
+		detail.setBounds(0, Theme.ROW_HEIGHT, getWidth(), detailHeight());
 	}
 
 	// ---------------------------------------------------------------- behaviour

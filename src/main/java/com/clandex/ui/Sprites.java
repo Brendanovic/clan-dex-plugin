@@ -21,6 +21,7 @@ final class Sprites
 	/** Transparent stand-ins that hold a sprite's space while it downloads, so text doesn't jump. */
 	static final ImageIcon PLACEHOLDER = blank(Theme.SPRITE);
 	static final ImageIcon PLACEHOLDER_LARGE = blank(Theme.SPRITE_LARGE);
+	static final ImageIcon ITEM_PLACEHOLDER = blank(Theme.ITEM_SPRITE);
 
 	private Sprites()
 	{

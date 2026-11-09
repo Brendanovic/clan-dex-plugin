@@ -1,11 +1,13 @@
 package com.clandex.ui;
 
+import com.clandex.Catch;
+import com.clandex.DexInfo;
+import com.clandex.PlayerDex;
 import com.clandex.SyncResult;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +19,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -35,7 +38,8 @@ import net.runelite.client.ui.components.IconTextField;
 
 /**
  * The sidebar panel. Top to bottom: title bar with a settings cog, summary card, Sync button
- * and status line, search box, All / Caught / Missing tabs, sort menu, then the list.
+ * and status line, then Dex / Bag tabs. The Dex tab has a search box, All / Caught / Missing /
+ * Shiny filters, a sort menu and the list; the Bag tab lists the player's items.
  *
  * <p>While a sync runs, the list is swapped for a shimmering {@link Skeleton}. When the data
  * arrives the rows cascade in, and filtering or sorting animates rows in and out rather than
@@ -53,15 +57,33 @@ public class ClanDexPanel extends PluginPanel
 	private static final String CARD_LIST = "list";
 	private static final String CARD_SKELETON = "skeleton";
 
+	private static final String VIEW_DEX = "dex";
+	private static final String VIEW_BAG = "bag";
+
 	private enum Filter
 	{
-		ALL("All"), CAUGHT("Caught"), MISSING("Missing");
+		ALL("All"), CAUGHT("Caught"), MISSING("Missing"), SHINY("Shiny");
 
 		final String label;
 
 		Filter(String label)
 		{
 			this.label = label;
+		}
+
+		boolean accepts(DexRow row)
+		{
+			switch (this)
+			{
+				case CAUGHT:
+					return row.isCaught();
+				case MISSING:
+					return !row.isCaught();
+				case SHINY:
+					return row.hasShiny();
+				default:
+					return true;
+			}
 		}
 	}
 
@@ -96,13 +118,15 @@ public class ClanDexPanel extends PluginPanel
 	private final JButton syncButton = new JButton("Sync");
 	private final JLabel status = Layout.label(" ", Theme.SMALL, Theme.TEXT_MUTED);
 	private final IconTextField search = new IconTextField();
-	private final JLabel[] filterTabs = new JLabel[Filter.values().length];
 	private final JComboBox<Sort> sortMenu = new JComboBox<>(Sort.values());
 
+	private final CardLayout views = new CardLayout();
+	private final JPanel viewArea = new JPanel(views);
 	private final CardLayout cards = new CardLayout();
 	private final JPanel body = new JPanel(cards);
 	private final AnimatedList list = new AnimatedList();
 	private final JLabel listMessage = Layout.label("Press Sync to load your dex", Theme.SMALL, Theme.TEXT_FAINT);
+	private final BagPanel bag;
 
 	/** Ticks once a second to count down the cooldown and age the "Synced 2m ago" text. */
 	private final Timer ticker = new Timer(1000, e -> refreshSyncControls());
@@ -123,15 +147,15 @@ public class ClanDexPanel extends PluginPanel
 		this.onSync = onSync;
 		this.onOpenSettings = onOpenSettings;
 		this.sprites = sprites;
+		this.bag = new BagPanel(sprites);
 
 		setLayout(new BorderLayout(0, Theme.GAP));
 		setBackground(Theme.BACKGROUND);
 		setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		add(buildHeader(), BorderLayout.NORTH);
-		add(buildBody(), BorderLayout.CENTER);
+		add(buildViews(), BorderLayout.CENTER);
 
-		refreshTabs();
 		ticker.start();
 	}
 
@@ -184,13 +208,16 @@ public class ClanDexPanel extends PluginPanel
 			return;
 		}
 
-		if (!result.getNames().equals(names))
+		DexInfo info = result.getInfo();
+		PlayerDex player = result.getPlayer();
+		if (!info.getNames().equals(names))
 		{
-			buildRows(result.getNames());
+			buildRows(info.getNames());
 			spriteTemplate = null; // new rows need their pictures again
 		}
-		applyCatches(result.getCaught());
-		requestSprites(result.getSpriteTemplate());
+		applyPlayer(info, player);
+		requestSprites(info);
+		bag.setBag(info, player);
 
 		lastSynced = Instant.now();
 		setStatus(result.isNoEntry() ? "No entries yet - play in clan chat to start" : "Synced just now", false);
@@ -222,6 +249,24 @@ public class ClanDexPanel extends PluginPanel
 
 		status.setHorizontalAlignment(SwingConstants.CENTER);
 
+		TabBar viewTabs = new TabBar(new String[]{"Dex", "Bag"},
+			i -> views.show(viewArea, i == 0 ? VIEW_DEX : VIEW_BAG));
+
+		header.add(Layout.fullWidth(buildTitleBar()));
+		header.add(Layout.vgap(Theme.GAP));
+		header.add(Layout.fullWidth(summary));
+		header.add(Layout.vgap(Theme.GAP));
+		header.add(Layout.fullWidth(syncButton));
+		header.add(Layout.vgap(4));
+		header.add(Layout.fullWidth(status));
+		header.add(Layout.vgap(Theme.GAP));
+		header.add(Layout.fullWidth(viewTabs));
+		return header;
+	}
+
+	/** The Dex and Bag tabs share this space; a CardLayout swaps between them. */
+	private JPanel buildViews()
+	{
 		search.setIcon(IconTextField.Icon.SEARCH);
 		search.setPreferredSize(new Dimension(0, 30));
 		search.setBackground(Theme.CARD);
@@ -251,20 +296,42 @@ public class ClanDexPanel extends PluginPanel
 		sortMenu.setPreferredSize(new Dimension(0, 26));
 		sortMenu.addActionListener(e -> applySort());
 
-		header.add(Layout.fullWidth(buildTitleBar()));
-		header.add(Layout.vgap(Theme.GAP));
-		header.add(Layout.fullWidth(summary));
-		header.add(Layout.vgap(Theme.GAP));
-		header.add(Layout.fullWidth(syncButton));
-		header.add(Layout.vgap(4));
-		header.add(Layout.fullWidth(status));
-		header.add(Layout.vgap(Theme.GAP));
-		header.add(Layout.fullWidth(search));
-		header.add(Layout.vgap(6));
-		header.add(Layout.fullWidth(buildFilterTabs()));
-		header.add(Layout.vgap(6));
-		header.add(Layout.fullWidth(sortMenu));
-		return header;
+		String[] filterLabels = new String[Filter.values().length];
+		for (Filter f : Filter.values())
+		{
+			filterLabels[f.ordinal()] = f.label;
+		}
+		TabBar filterTabs = new TabBar(filterLabels, i ->
+		{
+			filter = Filter.values()[i];
+			applyFilter();
+		});
+
+		JPanel controls = new JPanel();
+		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+		controls.setOpaque(false);
+		controls.add(Layout.fullWidth(search));
+		controls.add(Layout.vgap(6));
+		controls.add(Layout.fullWidth(filterTabs));
+		controls.add(Layout.vgap(6));
+		controls.add(Layout.fullWidth(sortMenu));
+
+		JPanel dexView = new JPanel(new BorderLayout(0, Theme.GAP));
+		dexView.setOpaque(false);
+		dexView.add(controls, BorderLayout.NORTH);
+		dexView.add(buildBody(), BorderLayout.CENTER);
+
+		JPanel bagContent = new JPanel(new BorderLayout());
+		bagContent.setBackground(Theme.BACKGROUND);
+		bagContent.add(bag, BorderLayout.NORTH);
+		JScrollPane bagScroll = new JScrollPane(bagContent);
+		bagScroll.setBorder(null);
+		bagScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+		viewArea.setOpaque(false);
+		viewArea.add(dexView, VIEW_DEX);
+		viewArea.add(bagScroll, VIEW_BAG);
+		return viewArea;
 	}
 
 	/** "Clan Dex" on the left, a settings cog on the right that opens this plugin's config. */
@@ -299,35 +366,6 @@ public class ClanDexPanel extends PluginPanel
 		bar.add(Layout.label("Clan Dex", Theme.TITLE, Theme.TEXT), BorderLayout.WEST);
 		bar.add(cog, BorderLayout.EAST);
 		return bar;
-	}
-
-	/** Three flat tabs; the selected one is highlighted and underlined in the accent colour. */
-	private JPanel buildFilterTabs()
-	{
-		JPanel tabs = new JPanel(new GridLayout(1, 0, 2, 0));
-		tabs.setOpaque(false);
-		tabs.setPreferredSize(new Dimension(0, 24));
-
-		for (Filter f : Filter.values())
-		{
-			JLabel tab = Layout.label(f.label, Theme.SMALL, Theme.TEXT_MUTED);
-			tab.setHorizontalAlignment(SwingConstants.CENTER);
-			tab.setOpaque(true);
-			tab.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-			tab.addMouseListener(new MouseAdapter()
-			{
-				@Override
-				public void mousePressed(MouseEvent e)
-				{
-					filter = f;
-					refreshTabs();
-					applyFilter();
-				}
-			});
-			filterTabs[f.ordinal()] = tab;
-			tabs.add(tab);
-		}
-		return tabs;
 	}
 
 	/** The list and the loading skeleton share this space; a CardLayout swaps between them. */
@@ -387,40 +425,58 @@ public class ClanDexPanel extends PluginPanel
 	}
 
 	/**
-	 * Asks for every row's sprite, once per link pattern. With no pattern (the bot sends no
-	 * sprites) rows show names only.
+	 * Asks for every row's sprite, once per link pattern, and the shiny sprite of every entry the
+	 * player owns a shiny of. With no pattern (the bot sends no sprites) rows show names only.
 	 */
-	private void requestSprites(String template)
+	private void requestSprites(DexInfo info)
 	{
-		if (Objects.equals(template, spriteTemplate))
+		String template = info.getSpriteTemplate();
+		if (!Objects.equals(template, spriteTemplate))
 		{
-			return;
-		}
-		spriteTemplate = template;
-		for (DexRow row : rows)
-		{
-			row.useSprites(template != null);
-			if (template != null)
+			spriteTemplate = template;
+			for (DexRow row : rows)
 			{
-				sprites.load(template, row.getIndex(), row::setSprite);
+				row.useSprites(template != null);
+				if (template != null)
+				{
+					sprites.load(Links.entry(template, row.getIndex()), row::setSprite);
+				}
+			}
+		}
+
+		String shinyTemplate = info.getShinySpriteTemplate();
+		if (template != null && shinyTemplate != null)
+		{
+			for (DexRow row : rows)
+			{
+				if (row.hasShiny())
+				{
+					sprites.load(Links.entry(shinyTemplate, row.getIndex()), row::setShinySprite);
+				}
 			}
 		}
 	}
 
-	private void applyCatches(Map<Integer, Integer> caught)
+	/** Fills every row, and the summary card, from the player's latest data. */
+	private void applyPlayer(DexInfo info, PlayerDex player)
 	{
+		Map<Integer, Integer> caught = player.getCaught();
 		int mostCaught = caught.entrySet().stream()
 			.filter(e -> e.getValue() > 1)
 			.max(Map.Entry.comparingByValue())
 			.map(Map.Entry::getKey)
 			.orElse(-1);
 
+		Map<Integer, List<Catch>> byEntry = player.getCatches().stream()
+			.collect(Collectors.groupingBy(Catch::getIndex));
+
 		for (DexRow row : rows)
 		{
 			row.collapse();
-			row.setCount(caught.getOrDefault(row.getIndex(), 0), row.getIndex() == mostCaught);
+			row.setPlayerData(caught.getOrDefault(row.getIndex(), 0), row.getIndex() == mostCaught,
+				byEntry.getOrDefault(row.getIndex(), Collections.emptyList()), info);
 		}
-		summary.setCaught(caught, rows.size());
+		summary.setCaught(caught, rows.size(), player.shinyCount());
 	}
 
 	/**
@@ -452,8 +508,7 @@ public class ClanDexPanel extends PluginPanel
 		String query = search.getText().trim().toLowerCase();
 		for (DexRow row : rows)
 		{
-			boolean tabMatches = filter == Filter.ALL || (filter == Filter.CAUGHT) == row.isCaught();
-			boolean show = tabMatches && row.matches(query);
+			boolean show = filter.accepts(row) && row.matches(query);
 			if (!show)
 			{
 				row.collapse();
@@ -478,18 +533,6 @@ public class ClanDexPanel extends PluginPanel
 		List<DexRow> ordered = new ArrayList<>(rows);
 		ordered.sort(((Sort) sortMenu.getSelectedItem()).order);
 		return ordered;
-	}
-
-	private void refreshTabs()
-	{
-		for (Filter f : Filter.values())
-		{
-			boolean selected = f == filter;
-			JLabel tab = filterTabs[f.ordinal()];
-			tab.setBackground(selected ? Theme.CARD : Theme.BACKGROUND);
-			tab.setForeground(selected ? Theme.TEXT : Theme.TEXT_MUTED);
-			tab.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, selected ? Theme.ACCENT : Theme.BACKGROUND));
-		}
 	}
 
 	/** Updates the Sync button for the cooldown, and ages the "Synced ..." text. */

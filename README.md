@@ -11,7 +11,12 @@ collected, how many times, and what's still out there.
 - A progress card: entries collected, completion %, and total catches.
 - Search, All / Caught / Missing tabs, and sorting by number, name or most caught.
 - Rows animate in and out as you filter, and the list cascades in after each sync.
-- Click an entry for details; right-click to copy its name.
+- Click an entry to see every catch of it, numbered like the bot does (Moroka #001, #002...):
+  shiny or not, level, gender, nature, ability (gold if it's the rare hidden one), ball, throws,
+  date and IVs.
+  Right-click to copy its name.
+- Shinies get their own sprite and a gold sparkle, and a **Shiny** filter.
+- A **Bag** tab shows your unlimited Basic Orbs and the items you've found.
 - Entry pictures come from your clan's bot: shown in full once caught, as a silhouette until then.
   If your clan's bot doesn't provide pictures, entries are listed by name only.
 - A settings cog in the panel, and a **Panel width** setting for a wider, two-column view.

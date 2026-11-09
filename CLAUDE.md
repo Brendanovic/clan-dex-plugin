@@ -34,10 +34,16 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `DexClient.java` | Downloads and parses the dex file |
 | `SpriteClient.java` | Downloads entry images from the bot's link pattern; session cache |
 | `DexKey.java` | Name normalisation and the HMAC key; must match the bot exactly |
-| `SyncResult.java` | Immutable result of one sync (found / no entry / error) |
-| `ui/ClanDexPanel.java` | The panel: title bar, sync, search, tabs, sort, list/skeleton swap |
+| `SyncResult.java` | Immutable result of one sync: `DexInfo` + `PlayerDex`, no entry, or an error |
+| `DexInfo.java` | File-level data: entry names, sprite / shiny / item picture links, item names |
+| `PlayerDex.java` | One player's data: catch counts, each `Catch`, and their bag |
+| `Catch.java` | One caught Creature: id, number, entry, shiny, gender, nature, ability, date, ball, throws, level, IVs (details may be missing) |
+| `ui/ClanDexPanel.java` | The panel: title bar, sync, Dex / Bag tabs; Dex has search, filters (incl. Shiny), sort, list/skeleton |
+| `ui/BagPanel.java` | The Bag tab: items with pictures and counts |
+| `ui/TabBar.java` | Flat tab row used for Dex / Bag and the filters |
+| `ui/Links.java` | Fills in `{n}` / `{id}` in the bot's picture link patterns |
 | `ui/AnimatedList.java` | List that animates rows in/out and flows into columns when wide |
-| `ui/DexRow.java` | One entry: sprite, number, name, count; click to expand, right-click menu |
+| `ui/DexRow.java` | One entry: sprite (shiny if owned), number, name, count; click to see each catch; right-click menu |
 | `ui/DexSummary.java` | The stats card |
 | `ui/Skeleton.java` | Shimmering placeholder rows shown while syncing |
 | `ui/SpriteLoader.java` | Interface the panel uses to ask for images (implemented by `SpriteClient`) |
@@ -47,8 +53,8 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `ui/Layout.java` | Small Swing helpers |
 | `src/test/.../ClanDexPluginTest.java` | Launches a dev client with the plugin loaded |
 | `src/test/.../DexKeyTest.java` | Checks the hash matches a value produced by the bot |
-| `src/test/.../DexClientTest.java` | Gist link handling, and reading formats 2 and 3 |
-| `dev/dex.sample.json` | Committed sample data: made-up names, no sprites |
+| `src/test/.../DexClientTest.java` | Gist link handling; reading formats 2 and 3, catches, bag, items |
+| `dev/dex.sample.json` | Committed sample data: made-up names, catches (2 shiny) and a bag; no pictures |
 | `dev/dex.local.json` | **Gitignored** sample with the real names and sprites (see Dev workflow) |
 | `icon.png` | Plugin Hub icon (48x72), the same ball as `Icons.NAV` |
 
@@ -63,7 +69,17 @@ bumping `version` (`DexClient.SUPPORTED_VERSION`).
   "updated": "2026-11-08T20:00:00.000Z",
   "names": ["First entry", "Second entry", "..."],
   "sprite": "https://example.com/sprites/{n}.png",
-  "players": { "<64 hex chars>": { "rev": 7, "dex": { "0": 1, "24": 3 } } }
+  "spriteShiny": "https://example.com/sprites/shiny/{n}.png",
+  "items": { "great-orb": { "name": "Great Orb" } },
+  "itemSprite": "https://example.com/items/{id}.png",
+  "players": { "<64 hex chars>": {
+    "rev": 7,
+    "dex": { "0": 1, "24": 3 },
+    "mons": [ { "id": "d82555a16d", "no": 1, "dex": 24, "shiny": true, "gender": "female",
+                "nature": "Adamant", "ability": "Static", "caughtAt": "2026-11-09T01:11:52.595Z",
+                "caughtWith": "basic-orb", "throws": 3, "level": 14,
+                "ivs": { "atk": 2, "def": 5, "spe": 5, "spc": 9 } } ],
+    "bag": { "great-orb": 1 } } }
 }
 ```
 
@@ -77,9 +93,14 @@ bumping `version` (`DexClient.SUPPORTED_VERSION`).
   the in-game name, lower case, keeping only letters, digits, spaces and hyphens, with OSRS
   non-breaking spaces turned into normal spaces. See `DexKey`; `DexKeyTest` pins it to a value
   produced by the bot.
-- Each player's record has `dex`, mapping an entry **index** (0 = #001) to a catch count. The plugin
-  reads only `dex` and **ignores every other field** (`rev`, and anything the bot adds later such
-  as a bag), so the bot can add fields without a plugin update. Only breaking changes bump
+- Each player's record has `dex`, mapping an entry **index** (0 = #001) to a catch count, plus
+  optional `mons` (each catch; see `Catch.java`, every detail but `dex` may be missing) and `bag`
+  (item id to count). A catch's `no` is the player's number for it within its species (#001,
+  #002...); the catch list is ordered by it and shows it, because the bot's commands use it
+  (`--rarecandy moroka 2`). `basic-orb` is unlimited for every player: any count of it in a bag
+  is ignored, and the Bag tab always shows it first as "Unlimited" (`DexInfo.UNLIMITED_BALL`). Top-level `spriteShiny`, `items` and `itemSprite` are optional too. The
+  plugin **ignores every field it doesn't know** (`rev`, and anything the bot adds later such as a
+  nickname), so the bot can add fields without a plugin update. Only breaking changes bump
   `version`. Format 2 (`"dex": { key: { index: count } }`) is still read, for a bot that hasn't
   updated yet; `DexClientTest` covers both.
 - **No names are ever published.** Without the clan key, the file can't be matched to players,

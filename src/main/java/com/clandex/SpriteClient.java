@@ -21,7 +21,7 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Downloads entry images from the link pattern the clan's bot publishes, and keeps them in
+ * Downloads the images the clan's bot links to (entries, shinies, items), and keeps them in
  * memory for the rest of the session, so each image is fetched at most once.
  * Failures are only logged: the row just stays without a picture.
  */
@@ -35,9 +35,8 @@ class SpriteClient implements SpriteLoader
 	private final Map<String, BufferedImage> cache = new ConcurrentHashMap<>();
 
 	@Override
-	public void load(String urlTemplate, int index, Consumer<BufferedImage> onLoaded)
+	public void load(String url, Consumer<BufferedImage> onLoaded)
 	{
-		String url = urlTemplate.replace("{n}", String.valueOf(index + 1));
 		BufferedImage cached = cache.get(url);
 		if (cached != null)
 		{

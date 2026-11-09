@@ -5,7 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -36,9 +39,11 @@ import okhttp3.ResponseBody;
  * }
  * </pre>
  * Keys under {@code players} come from {@link DexKey#forPlayer}. In each player's record,
- * {@code dex} maps an entry index (0 = #001) to a catch count; every other field (the bot's
- * {@code rev}, and anything added later such as a bag) is ignored here, so the bot can grow the
- * format without breaking the plugin. {@code sprite} is optional; only https links are accepted.
+ * {@code dex} maps an entry index (0 = #001) to a catch count; {@code mons} lists each catch
+ * (see {@link Catch}) and {@code bag} counts items by id. All of these, and the top-level
+ * {@code spriteShiny}, {@code items} and {@code itemSprite}, are optional, and fields this
+ * version doesn't know are ignored, so the bot can grow the format without breaking the plugin.
+ * Picture links are only used if they are https.
  * Format 2 (a {@code dex} object mapping each key straight to its catches) is still read.
  */
 @Slf4j
@@ -143,51 +148,168 @@ class DexClient
 				: "The dex file is in an old format");
 		}
 
+		DexInfo info = readInfo(root);
+		JsonObject record = playerRecord(root, version, playerKey);
+		if (record == null)
+		{
+			return SyncResult.noEntry(info);
+		}
+
+		int entries = info.getNames().size();
+		Map<Integer, Integer> caught = new HashMap<>();
+		for (Map.Entry<String, JsonElement> entry : object(record, "dex").entrySet())
+		{
+			int index = Integer.parseInt(entry.getKey());
+			int count = entry.getValue().getAsInt();
+			if (index >= 0 && index < entries && count > 0)
+			{
+				caught.put(index, count);
+			}
+		}
+
+		List<Catch> catches = new ArrayList<>();
+		if (record.has("mons") && record.get("mons").isJsonArray())
+		{
+			for (JsonElement element : record.getAsJsonArray("mons"))
+			{
+				Catch c = readCatch(element.getAsJsonObject());
+				if (c != null && c.getIndex() < entries)
+				{
+					catches.add(c);
+				}
+			}
+		}
+
+		// bag in the bot's item order, then any items it didn't list. Basic Orbs are unlimited, so
+		// any count of them in the data is ignored; the Bag tab always shows them as unlimited.
+		Map<String, Integer> bag = new LinkedHashMap<>();
+		JsonObject rawBag = object(record, "bag");
+		rawBag.remove(DexInfo.UNLIMITED_BALL);
+		for (String id : info.getItemNames().keySet())
+		{
+			if (rawBag.has(id) && rawBag.get(id).getAsInt() > 0)
+			{
+				bag.put(id, rawBag.get(id).getAsInt());
+			}
+		}
+		for (Map.Entry<String, JsonElement> entry : rawBag.entrySet())
+		{
+			if (!bag.containsKey(entry.getKey()) && entry.getValue().getAsInt() > 0)
+			{
+				bag.put(entry.getKey(), entry.getValue().getAsInt());
+			}
+		}
+
+		return SyncResult.found(info, new PlayerDex(caught, catches, bag));
+	}
+
+	/** Names, picture links and item names from the top of the file. */
+	private static DexInfo readInfo(JsonObject root)
+	{
 		List<String> names = new ArrayList<>();
 		for (JsonElement name : root.getAsJsonArray("names"))
 		{
 			names.add(name.getAsString());
 		}
 
-		String sprite = root.has("sprite") ? root.get("sprite").getAsString() : null;
-		if (sprite != null && !sprite.startsWith("https://"))
+		Map<String, String> itemNames = new LinkedHashMap<>();
+		for (Map.Entry<String, JsonElement> item : object(root, "items").entrySet())
 		{
-			sprite = null; // only ever load images over https
+			JsonObject details = item.getValue().getAsJsonObject();
+			itemNames.put(item.getKey(), details.has("name") ? details.get("name").getAsString() : item.getKey());
 		}
 
-		JsonObject entries = playerEntries(root, version, playerKey);
-		if (entries == null)
-		{
-			return SyncResult.noEntry(names, sprite);
-		}
-
-		Map<Integer, Integer> caught = new HashMap<>();
-		for (Map.Entry<String, JsonElement> entry : entries.entrySet())
-		{
-			int index = Integer.parseInt(entry.getKey());
-			int count = entry.getValue().getAsInt();
-			if (index >= 0 && index < names.size() && count > 0)
-			{
-				caught.put(index, count);
-			}
-		}
-		return SyncResult.found(names, sprite, caught);
+		return new DexInfo(names, httpsLink(root, "sprite"), httpsLink(root, "spriteShiny"), httpsLink(root, "itemSprite"), itemNames);
 	}
 
-	/** This player's { index: count } catches, or null if they aren't in the file. */
-	private static JsonObject playerEntries(JsonObject root, int version, String playerKey)
+	/** One entry of a player's "mons" list, or null if it's unusable. Missing details stay null. */
+	private static Catch readCatch(JsonObject mon)
 	{
-		if (version == PREVIOUS_VERSION)
-		{
-			JsonObject dex = root.getAsJsonObject("dex");
-			return dex != null && dex.has(playerKey) ? dex.getAsJsonObject(playerKey) : null;
-		}
-		JsonObject players = root.getAsJsonObject("players");
-		if (players == null || !players.has(playerKey))
+		if (!mon.has("dex"))
 		{
 			return null;
 		}
-		JsonObject record = players.getAsJsonObject(playerKey);
-		return record.has("dex") ? record.getAsJsonObject("dex") : new JsonObject();
+		int[] ivs = null;
+		if (mon.has("ivs") && mon.get("ivs").isJsonObject())
+		{
+			JsonObject raw = mon.getAsJsonObject("ivs");
+			ivs = new int[]{intOr(raw, "atk", 0), intOr(raw, "def", 0), intOr(raw, "spe", 0), intOr(raw, "spc", 0)};
+		}
+		Instant caughtAt = null;
+		if (mon.has("caughtAt") && !mon.get("caughtAt").isJsonNull())
+		{
+			try
+			{
+				caughtAt = Instant.parse(mon.get("caughtAt").getAsString());
+			}
+			catch (DateTimeParseException e)
+			{
+				// leave the date unknown rather than drop the catch
+			}
+		}
+		return new Catch(
+			mon.has("id") ? mon.get("id").getAsString() : "",
+			mon.has("no") ? mon.get("no").getAsInt() : null,
+			mon.get("dex").getAsInt(),
+			mon.has("shiny") && mon.get("shiny").getAsBoolean(),
+			text(mon, "gender"),
+			text(mon, "nature"),
+			text(mon, "ability"),
+			mon.has("hiddenAbility") && mon.get("hiddenAbility").getAsBoolean(),
+			caughtAt,
+			mon.has("caughtWith") && !mon.get("caughtWith").isJsonNull() ? mon.get("caughtWith").getAsString() : null,
+			mon.has("throws") ? mon.get("throws").getAsInt() : null,
+			mon.has("level") ? mon.get("level").getAsInt() : null,
+			ivs);
+	}
+
+	/**
+	 * This player's record, or null if they aren't in the file. Format 2 stored the catches
+	 * directly; it is wrapped as { dex: ... } so both read the same way.
+	 */
+	private static JsonObject playerRecord(JsonObject root, int version, String playerKey)
+	{
+		String section = version == PREVIOUS_VERSION ? "dex" : "players";
+		JsonObject players = object(root, section);
+		if (!players.has(playerKey))
+		{
+			return null;
+		}
+		JsonObject found = players.getAsJsonObject(playerKey);
+		if (version == PREVIOUS_VERSION)
+		{
+			JsonObject wrapped = new JsonObject();
+			wrapped.add("dex", found);
+			return wrapped;
+		}
+		return found;
+	}
+
+	/** A child object, or an empty one if it's missing or not an object. */
+	private static JsonObject object(JsonObject parent, String key)
+	{
+		return parent.has(key) && parent.get(key).isJsonObject() ? parent.getAsJsonObject(key) : new JsonObject();
+	}
+
+	/** A text field, or null if it's missing or null. */
+	private static String text(JsonObject parent, String key)
+	{
+		return parent.has(key) && !parent.get(key).isJsonNull() ? parent.get(key).getAsString() : null;
+	}
+
+	private static int intOr(JsonObject parent, String key, int fallback)
+	{
+		return parent.has(key) ? parent.get(key).getAsInt() : fallback;
+	}
+
+	/** A link from the file, only if it is https (images are never loaded over plain http). */
+	private static String httpsLink(JsonObject root, String key)
+	{
+		if (!root.has(key) || root.get(key).isJsonNull())
+		{
+			return null;
+		}
+		String link = root.get(key).getAsString();
+		return link.startsWith("https://") ? link : null;
 	}
 }

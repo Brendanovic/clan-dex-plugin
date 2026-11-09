@@ -24,6 +24,7 @@ final class Theme
 	static final Color TEXT_FAINT = ColorScheme.MEDIUM_GRAY_COLOR;
 	static final Color ACCENT = ColorScheme.BRAND_ORANGE;
 	static final Color ERROR = new Color(0xE06C5A);
+	static final Color SHINY = new Color(0xF5C542);
 
 	// Progress bar, loading skeleton and icons
 	static final Color PROGRESS = ColorScheme.PROGRESS_COMPLETE_COLOR;
@@ -44,7 +45,7 @@ final class Theme
 	static final int ROW_HEIGHT = 26;
 	static final int SPRITE = 21;          // entry sprite in a list row
 	static final int SPRITE_LARGE = 49;    // entry sprite in the expanded detail card
-	static final int DETAIL_HEIGHT = 60;   // extra height when a row is expanded
+	static final int ITEM_SPRITE = 24;     // item picture in the bag
 
 	// Animation, in milliseconds
 	static final int ANIM_MS = 180;        // one row easing in or out

@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import net.runelite.client.ui.components.ProgressBar;
 
 /**
@@ -17,7 +18,7 @@ import net.runelite.client.ui.components.ProgressBar;
  *  Fake Test Player
  *  37 / 151                        24%
  *  [=========-----------------------]
- *  52 total catches
+ *  52 total catches, 2 shiny  *
  * </pre>
  */
 class DexSummary extends JPanel
@@ -60,8 +61,11 @@ class DexSummary extends JPanel
 		player.setText(name);
 	}
 
-	/** Refreshes every number on the card from a player's catches out of {@code entries} in the dex. */
-	void setCaught(Map<Integer, Integer> caught, int entries)
+	/**
+	 * Refreshes every number on the card from a player's catches out of {@code entries} in the dex,
+	 * and how many of their catches are shiny.
+	 */
+	void setCaught(Map<Integer, Integer> caught, int entries, long shinies)
 	{
 		int unique = caught.size();
 		int total = caught.values().stream().mapToInt(Integer::intValue).sum();
@@ -71,7 +75,10 @@ class DexSummary extends JPanel
 		percent.setText(entries == 0 ? "0%" : Math.round(unique * 100f / entries) + "%");
 		progress.setMaximumValue(Math.max(1, entries));
 		progress.setValue(unique);
-		totalCatches.setText(total == 0 ? " " : total + (total == 1 ? " total catch" : " total catches"));
+		String totals = total == 0 ? " " : total + (total == 1 ? " total catch" : " total catches");
+		totalCatches.setText(shinies > 0 ? totals + ", " + shinies + " shiny" : totals);
+		totalCatches.setIcon(shinies > 0 ? Icons.SHINY : null);
+		totalCatches.setHorizontalTextPosition(SwingConstants.LEFT);
 	}
 
 	/** A transparent row with one component pinned left and one pinned right. */
