@@ -60,8 +60,9 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `src/test/.../stats/StatFormulasTest.java` | Gen 1 worked examples; picking formulas by name |
 | `src/test/.../DexKeyTest.java` | Checks the hash matches a value produced by the bot |
 | `src/test/.../DexClientTest.java` | Gist link handling; reading formats 2 and 3, catches, bag, items |
-| `dev/dex.sample.json` | Committed sample data: made-up names, catches and a bag; no pictures |
+| `dev/dex.sample.json` | The reviewer demo (DEMO.md): made-up names, 24 catches, 2 shinies, a hidden ability, a bag, 2 players; no pictures. `demoSampleLoads` keeps it working |
 | `dev/dex.local.json` | **Gitignored** sample with the real names and sprites (see Dev workflow) |
+| `DEMO.md` | Reviewer demo: settings, what to try, recording shot list |
 | `icon.png` | Plugin Hub icon (48x72), the same ball as `Icons.NAV` |
 
 ## Data contract (shared with the bot)

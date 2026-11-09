@@ -142,6 +142,20 @@ public class DexClientTest
 		assertEquals(java.util.Arrays.asList("Move One", "Move Two"), right.getPlayer().getCatches().get(0).getMoves());
 	}
 
+	/** The reviewer demo (DEMO.md) must keep working: the committed sample, the demo key and name. */
+	@Test
+	public void demoSampleLoads() throws Exception
+	{
+		String sample = new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get("dev/dex.sample.json")), java.nio.charset.StandardCharsets.UTF_8);
+		SyncResult r = client.parse(sample, DexKey.forPlayer("clan-dev-key", "Fake Test Player"), "clan-dev-key");
+		assertEquals(null, r.getError());
+		assertEquals(24, r.getPlayer().getCatches().size());
+		assertEquals(2, r.getPlayer().shinyCount());
+		assertEquals("Basic Orb", r.getInfo().getUnlimitedItems().get("basic-orb"));
+		assertEquals(2, r.getInfo().getMembers().size());
+		assertEquals("That clan key doesn't match your clan's", client.parse(sample, "x", "wrong-key").getError());
+	}
+
 	/** The bot's names.js format, so this test can make its own key check. */
 	private static String encrypt(String text)
 	{

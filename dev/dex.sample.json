@@ -1,6 +1,7 @@
 {
  "version": 3,
- "updated": "2026-11-08T20:00:00.000Z",
+ "bot": "1.2.0",
+ "updated": "2026-11-09T12:00:00.000Z",
  "names": [
   "Mottoon",
   "Orrra",
@@ -155,645 +156,26 @@
   "Vexlet"
  ],
  "items": {
-  "potion": {
-   "name": "Potion"
-  },
   "great-orb": {
    "name": "Great Orb"
   },
-  "strong-tonic": {
-   "name": "Strong Tonic"
-  },
-  "ultra-orb": {
-   "name": "Ultra Orb"
+  "master-orb": {
+   "name": "Master Orb"
   },
   "level-treat": {
    "name": "Level Treat"
-  },
-  "master-orb": {
-   "name": "Master Orb"
   }
  },
- "players": {
-  "9126d1c3c91a709ad05e2654308ac83327eed262c3474d5f9c22b61e3b94ae72": {
-   "rev": 15,
-   "dex": {
-    "0": 1,
-    "3": 2,
-    "6": 1,
-    "10": 1,
-    "15": 4,
-    "24": 3,
-    "38": 1,
-    "52": 2,
-    "63": 1,
-    "77": 1,
-    "94": 1,
-    "110": 2,
-    "129": 1,
-    "142": 1,
-    "150": 1
-   },
-   "mons": [
-    {
-     "id": "042422f7c8",
-     "no": 1,
-     "dex": 0,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-04T19:44:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 2,
-     "level": 13,
-     "ivs": {
-      "atk": 15,
-      "def": 2,
-      "spe": 0,
-      "spc": 15
-     },
-     "nature": "Naive",
-     "ability": "Sanodr",
-     "moves": [
-      "Growl",
-      "Tackle",
-      "Tafigr Zelzelfi",
-      "Rovubr Noroqu"
-     ]
-    },
-    {
-     "id": "56a3370af9",
-     "no": 1,
-     "dex": 3,
-     "shiny": true,
-     "gender": "female",
-     "caughtAt": "2026-11-05T18:24:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 2,
-     "level": 24,
-     "ivs": {
-      "atk": 15,
-      "def": 15,
-      "spe": 12,
-      "spc": 4
-     },
-     "nature": "Brave",
-     "ability": "Katubr Quakafi",
-     "hiddenAbility": true,
-     "moves": [
-      "Scratch",
-      "Ember",
-      "Leer",
-      "Rage"
-     ]
-    },
-    {
-     "id": "57a51746f3",
-     "no": 2,
-     "dex": 3,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-04T20:19:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 4,
-     "level": 25,
-     "ivs": {
-      "atk": 0,
-      "def": 2,
-      "spe": 5,
-      "spc": 1
-     },
-     "nature": "Naive",
-     "ability": "Blaze",
-     "moves": [
-      "Scratch",
-      "Ember",
-      "Leer",
-      "Rage"
-     ]
-    },
-    {
-     "id": "b80ad86ee9",
-     "no": 1,
-     "dex": 6,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-05T22:11:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 3,
-     "level": 17,
-     "ivs": {
-      "atk": 12,
-      "def": 13,
-      "spe": 12,
-      "spc": 14
-     },
-     "nature": "Naive",
-     "ability": "Torrent",
-     "moves": [
-      "Tackle",
-      "Quarobr Savulo",
-      "Bubble",
-      "Brapelno Mivenfi"
-     ]
-    },
-    {
-     "id": "0e8f1e71dd",
-     "no": 1,
-     "dex": 10,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-03T15:16:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 6,
-     "ivs": {
-      "atk": 15,
-      "def": 6,
-      "spe": 8,
-      "spc": 13
-     },
-     "nature": "Brave",
-     "ability": "Takata Bragridr",
-     "moves": [
-      "Harden"
-     ]
-    },
-    {
-     "id": "34bc3f7b0c",
-     "no": 1,
-     "dex": 15,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-05T16:42:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 4,
-     "level": 20,
-     "ivs": {
-      "atk": 11,
-      "def": 13,
-      "spe": 7,
-      "spc": 10
-     },
-     "nature": "Quiet",
-     "ability": "Zelpelpe Grisadr",
-     "moves": [
-      "Gust",
-      "Pelzelmi Mizelve",
-      "Quafimo Lomiro",
-      "Whirlwind"
-     ]
-    },
-    {
-     "id": "6277e4f4f4",
-     "no": 2,
-     "dex": 15,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-01T23:27:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 2,
-     "level": 24,
-     "ivs": {
-      "atk": 10,
-      "def": 3,
-      "spe": 6,
-      "spc": 8
-     },
-     "nature": "Modest",
-     "ability": "Zelpelpe Grisadr",
-     "moves": [
-      "Gust",
-      "Pelzelmi Mizelve",
-      "Quafimo Lomiro",
-      "Whirlwind"
-     ]
-    },
-    {
-     "id": "44e3bb5e2c",
-     "no": 3,
-     "dex": 15,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-05T11:14:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 4,
-     "level": 29,
-     "ivs": {
-      "atk": 15,
-      "def": 2,
-      "spe": 11,
-      "spc": 2
-     },
-     "nature": "Timid",
-     "ability": "Zelpelpe Grisadr",
-     "moves": [
-      "Pelzelmi Mizelve",
-      "Quafimo Lomiro",
-      "Whirlwind",
-      "Drisami Motaka"
-     ]
-    },
-    {
-     "id": "820fe89363",
-     "no": 4,
-     "dex": 15,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-07T12:11:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 3,
-     "level": 15,
-     "ivs": {
-      "atk": 13,
-      "def": 3,
-      "spe": 1,
-      "spc": 1
-     },
-     "nature": "Brave",
-     "ability": "Zelpelpe Grisadr",
-     "moves": [
-      "Gust",
-      "Pelzelmi Mizelve",
-      "Quafimo Lomiro"
-     ]
-    },
-    {
-     "id": "b0ac89ea74",
-     "no": 1,
-     "dex": 24,
-     "shiny": true,
-     "gender": "female",
-     "caughtAt": "2026-11-07T21:47:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 3,
-     "level": 19,
-     "ivs": {
-      "atk": 8,
-      "def": 7,
-      "spe": 1,
-      "spc": 9
-     },
-     "nature": "Naive",
-     "ability": "Static",
-     "moves": [
-      "Growl",
-      "Zelmoro Rodrilo",
-      "Venfiqu Grizelgr",
-      "Quafimo Lomiro"
-     ]
-    },
-    {
-     "id": "277383548c",
-     "no": 2,
-     "dex": 24,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-01T11:16:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 8,
-     "ivs": {
-      "atk": 13,
-      "def": 9,
-      "spe": 8,
-      "spc": 4
-     },
-     "nature": "Quiet",
-     "ability": "Static",
-     "moves": [
-      "Growl",
-      "Zelmoro Rodrilo"
-     ]
-    },
-    {
-     "id": "4563905274",
-     "no": 3,
-     "dex": 24,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-01T23:31:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 3,
-     "level": 13,
-     "ivs": {
-      "atk": 4,
-      "def": 12,
-      "spe": 12,
-      "spc": 14
-     },
-     "nature": "Timid",
-     "ability": "Static",
-     "moves": [
-      "Growl",
-      "Zelmoro Rodrilo",
-      "Venfiqu Grizelgr"
-     ]
-    },
-    {
-     "id": "a9ab021c23",
-     "no": 1,
-     "dex": 38,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-07T20:48:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 21,
-     "ivs": {
-      "atk": 8,
-      "def": 13,
-      "spe": 7,
-      "spc": 9
-     },
-     "nature": "Adamant",
-     "ability": "Tutano Mibratu",
-     "moves": [
-      "Sing",
-      "Pound",
-      "Disable",
-      "Pelgrilo Losatu"
-     ]
-    },
-    {
-     "id": "91e629548c",
-     "no": 1,
-     "dex": 52,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-07T14:43:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 3,
-     "level": 19,
-     "ivs": {
-      "atk": 10,
-      "def": 0,
-      "spe": 13,
-      "spc": 10
-     },
-     "nature": "Naive",
-     "ability": "Limber",
-     "moves": [
-      "Growl",
-      "Scratch",
-      "Screech",
-      "Drisalo Robradr"
-     ]
-    },
-    {
-     "id": "19a0340e26",
-     "no": 2,
-     "dex": 52,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-01T16:49:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 2,
-     "level": 3,
-     "ivs": {
-      "atk": 10,
-      "def": 14,
-      "spe": 11,
-      "spc": 11
-     },
-     "nature": "Jolly",
-     "ability": "Limber",
-     "moves": [
-      "Bite",
-      "Growl",
-      "Scratch",
-      "Screech"
-     ]
-    },
-    {
-     "id": "2abdfb3de8",
-     "no": 1,
-     "dex": 63,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-05T21:41:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 20,
-     "ivs": {
-      "atk": 1,
-      "def": 0,
-      "spe": 11,
-      "spc": 8
-     },
-     "nature": "Timid",
-     "ability": "Synchronize",
-     "moves": [
-      "Confusion",
-      "Disable",
-      "Teleport"
-     ]
-    },
-    {
-     "id": "0d01a51cd6",
-     "no": 1,
-     "dex": 77,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-08T14:47:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 3,
-     "level": 7,
-     "ivs": {
-      "atk": 11,
-      "def": 5,
-      "spe": 10,
-      "spc": 11
-     },
-     "nature": "Adamant",
-     "ability": "Quaquamo Grimolo",
-     "moves": [
-      "Ember",
-      "Growl",
-      "Stomp",
-      "Quarobr Savulo"
-     ]
-    },
-    {
-     "id": "82a608bee3",
-     "no": 1,
-     "dex": 94,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-05T14:34:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 26,
-     "ivs": {
-      "atk": 0,
-      "def": 4,
-      "spe": 9,
-      "spc": 7
-     },
-     "nature": "Brave",
-     "ability": "Sabravu Ventulo",
-     "moves": [
-      "Tackle",
-      "Bind",
-      "Zelkadr Nopelka",
-      "Rage"
-     ]
-    },
-    {
-     "id": "1e2d36e6fa",
-     "no": 1,
-     "dex": 110,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-05T13:30:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 2,
-     "level": 23,
-     "ivs": {
-      "atk": 13,
-      "def": 3,
-      "spe": 3,
-      "spc": 10
-     },
-     "nature": "Hardy",
-     "ability": "Venvenlo Quatumo",
-     "moves": [
-      "Ropelfi Loquape"
-     ]
-    },
-    {
-     "id": "ef2a3fb2c9",
-     "no": 2,
-     "dex": 110,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-06T20:24:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 4,
-     "level": 27,
-     "ivs": {
-      "atk": 5,
-      "def": 2,
-      "spe": 10,
-      "spc": 6
-     },
-     "nature": "Quiet",
-     "ability": "Venvenlo Quatumo",
-     "moves": [
-      "Ropelfi Loquape"
-     ]
-    },
-    {
-     "id": "1e5f635105",
-     "no": 1,
-     "dex": 129,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-08T14:24:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 3,
-     "ivs": {
-      "atk": 6,
-      "def": 10,
-      "spe": 5,
-      "spc": 8
-     },
-     "nature": "Bold",
-     "ability": "Intimidate",
-     "moves": [
-      "Bite",
-      "Lomoro Lotaro",
-      "Fikaqu Grikaqu",
-      "Leer"
-     ]
-    },
-    {
-     "id": "d40f044faa",
-     "no": 1,
-     "dex": 142,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-06T22:51:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 1,
-     "level": 27,
-     "ivs": {
-      "atk": 11,
-      "def": 4,
-      "spe": 13,
-      "spc": 9
-     },
-     "nature": "Naive",
-     "ability": "Immunity",
-     "moves": [
-      "Amnesia",
-      "Headbutt",
-      "Rest"
-     ]
-    },
-    {
-     "id": "ada6517c8d",
-     "no": 1,
-     "dex": 150,
-     "shiny": false,
-     "gender": "female",
-     "caughtAt": "2026-11-05T17:32:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 4,
-     "level": 11,
-     "ivs": {
-      "atk": 13,
-      "def": 13,
-      "spe": 1,
-      "spc": 13
-     },
-     "nature": "Quiet",
-     "ability": "Synchronize",
-     "moves": [
-      "Pound",
-      "Transform"
-     ]
-    }
-   ],
-   "bag": {
-    "great-orb": 2,
-    "potion": 1,
-    "level-treat": 1
+ "display": {
+  "unlimitedItems": [
+   {
+    "id": "basic-orb",
+    "name": "Basic Orb"
    }
-  },
-  "49ee037d8342662e63676a9bfccf55ab54c7024801916c28366e7d7de64ecc3f": {
-   "rev": 1,
-   "dex": {
-    "1": 1
-   },
-   "mons": [
-    {
-     "id": "11abdbacd2",
-     "no": 1,
-     "dex": 1,
-     "shiny": false,
-     "gender": "male",
-     "caughtAt": "2026-11-03T13:10:00.000Z",
-     "caughtWith": "basic-orb",
-     "throws": 4,
-     "level": 28,
-     "ivs": {
-      "atk": 13,
-      "def": 7,
-      "spe": 1,
-      "spc": 14
-     },
-     "nature": "Timid",
-     "ability": "Sanodr",
-     "moves": [
-      "Tafigr Zelzelfi",
-      "Tackle",
-      "Rovubr Noroqu",
-      "Zelgrisa Modrita"
-     ]
-    }
-   ],
-   "bag": {}
+  ],
+  "terms": {
+   "entry": "creature",
+   "entries": "creatures"
   }
  },
  "baseStats": {
@@ -1855,9 +1237,627 @@
    "spc": 100
   }
  },
- "keyCheck": "wIZwwKZdzstj9kmEoCjGPBXDwpBlmR7lR6r8YAK3aIzmpH2z5u/pMjT40EjSnQ==",
+ "statFormula": "gen1",
+ "keyCheck": "tKzV4RHHnV7gkDaJruz2r5RQPnsRQCKMsyT45ZDmIuKrNQDsG26TTYYSVc4iBQ==",
  "members": {
-  "9126d1c3c91a709ad05e2654308ac83327eed262c3474d5f9c22b61e3b94ae72": "RvGaiuqwNGBTClw/aRv4JSyQuwrnvA6DypDOjP83qea837suPx4UPR6OYHY=",
-  "49ee037d8342662e63676a9bfccf55ab54c7024801916c28366e7d7de64ecc3f": "IgVAayAI4hEEuW62EEb10trHsLjB/cT7KHU/tJQUeSLnBYhy03BoODAkwy6EJls="
+  "9126d1c3c91a709ad05e2654308ac83327eed262c3474d5f9c22b61e3b94ae72": "pQ8U6FAIMxOvTzxWth19PH1IC0iWKU/a4hCNtZChCDmc/Noc5AhoUi/K1FI=",
+  "49ee037d8342662e63676a9bfccf55ab54c7024801916c28366e7d7de64ecc3f": "QPtnkxrclLOKlkmiIHkVjGZEAUYxx01Lh4IXLKkYFzU4BN4xUHX9F2eAtq5/3dw="
+ },
+ "players": {
+  "9126d1c3c91a709ad05e2654308ac83327eed262c3474d5f9c22b61e3b94ae72": {
+   "rev": 24,
+   "dex": {
+    "0": 3,
+    "3": 2,
+    "6": 1,
+    "15": 4,
+    "24": 3,
+    "38": 1,
+    "52": 2,
+    "63": 1,
+    "77": 1,
+    "94": 1,
+    "110": 2,
+    "129": 1,
+    "142": 1,
+    "150": 1
+   },
+   "mons": [
+    {
+     "id": "722f024e35",
+     "no": 1,
+     "dex": 0,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Brave",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-04T15:13:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 3,
+     "level": 14,
+     "ivs": {
+      "atk": 9,
+      "def": 6,
+      "spe": 4,
+      "spc": 12
+     },
+     "moves": [
+      "Nudge",
+      "Pebble Shot",
+      "Splash Jet",
+      "Tail Flick"
+     ]
+    },
+    {
+     "id": "11d4a161ab",
+     "no": 2,
+     "dex": 0,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Calm",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-02T15:33:00.000Z",
+     "caughtWith": "great-orb",
+     "throws": 1,
+     "level": 8,
+     "ivs": {
+      "atk": 0,
+      "def": 15,
+      "spe": 15,
+      "spc": 1
+     },
+     "moves": [
+      "Nudge",
+      "Pebble Shot",
+      "Splash Jet"
+     ]
+    },
+    {
+     "id": "de843c9773",
+     "no": 3,
+     "dex": 0,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Timid",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-06T12:18:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 3,
+     "level": 6,
+     "ivs": {
+      "atk": 7,
+      "def": 3,
+      "spe": 8,
+      "spc": 5
+     },
+     "moves": [
+      "Nudge",
+      "Pebble Shot"
+     ]
+    },
+    {
+     "id": "b3f0919816",
+     "no": 1,
+     "dex": 3,
+     "shiny": true,
+     "gender": "male",
+     "nature": "Bold",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-08T12:53:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 2,
+     "ivs": {
+      "atk": 3,
+      "def": 9,
+      "spe": 6,
+      "spc": 12
+     },
+     "moves": [
+      "Pebble Shot"
+     ]
+    },
+    {
+     "id": "1faab8e634",
+     "no": 2,
+     "dex": 3,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Timid",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-01T14:43:00.000Z",
+     "caughtWith": "great-orb",
+     "throws": 2,
+     "level": 8,
+     "ivs": {
+      "atk": 15,
+      "def": 5,
+      "spe": 7,
+      "spc": 7
+     },
+     "moves": [
+      "Pebble Shot",
+      "Splash Jet",
+      "Tail Flick"
+     ]
+    },
+    {
+     "id": "c33655c20c",
+     "no": 1,
+     "dex": 6,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Timid",
+     "ability": "Quick Reflexes",
+     "caughtAt": "2026-11-02T17:16:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 1,
+     "level": 6,
+     "ivs": {
+      "atk": 12,
+      "def": 13,
+      "spe": 15,
+      "spc": 14
+     },
+     "moves": [
+      "Splash Jet",
+      "Tail Flick"
+     ]
+    },
+    {
+     "id": "ae039fd7b6",
+     "no": 1,
+     "dex": 15,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Jolly",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-03T13:20:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 11,
+     "ivs": {
+      "atk": 10,
+      "def": 11,
+      "spe": 4,
+      "spc": 15
+     },
+     "moves": [
+      "Pebble Shot",
+      "Splash Jet",
+      "Tail Flick"
+     ]
+    },
+    {
+     "id": "53c4f2a809",
+     "no": 2,
+     "dex": 15,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Timid",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-08T14:52:00.000Z",
+     "caughtWith": "great-orb",
+     "throws": 2,
+     "level": 1,
+     "ivs": {
+      "atk": 7,
+      "def": 2,
+      "spe": 12,
+      "spc": 14
+     },
+     "moves": [
+      "Pebble Shot"
+     ]
+    },
+    {
+     "id": "05ae585c29",
+     "no": 3,
+     "dex": 15,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Modest",
+     "ability": "Night Owl",
+     "hiddenAbility": true,
+     "caughtAt": "2026-11-06T16:52:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 1,
+     "level": 4,
+     "ivs": {
+      "atk": 13,
+      "def": 2,
+      "spe": 0,
+      "spc": 1
+     },
+     "moves": [
+      "Pebble Shot",
+      "Splash Jet"
+     ]
+    },
+    {
+     "id": "7d0dfd6c4e",
+     "no": 4,
+     "dex": 15,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Quiet",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-04T10:23:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 1,
+     "ivs": {
+      "atk": 1,
+      "def": 5,
+      "spe": 3,
+      "spc": 4
+     },
+     "moves": [
+      "Pebble Shot"
+     ]
+    },
+    {
+     "id": "1fd0caf421",
+     "no": 1,
+     "dex": 24,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Brave",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-01T14:15:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 10,
+     "ivs": {
+      "atk": 6,
+      "def": 0,
+      "spe": 12,
+      "spc": 7
+     },
+     "moves": [
+      "Nudge",
+      "Pebble Shot",
+      "Splash Jet"
+     ]
+    },
+    {
+     "id": "4ea56e5a52",
+     "no": 2,
+     "dex": 24,
+     "shiny": true,
+     "gender": "female",
+     "nature": "Modest",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-03T13:13:00.000Z",
+     "caughtWith": "great-orb",
+     "throws": 3,
+     "level": 9,
+     "ivs": {
+      "atk": 1,
+      "def": 1,
+      "spe": 2,
+      "spc": 4
+     },
+     "moves": [
+      "Nudge",
+      "Pebble Shot",
+      "Splash Jet"
+     ]
+    },
+    {
+     "id": "8bca09b9cb",
+     "no": 3,
+     "dex": 24,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Timid",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-08T15:30:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 1,
+     "level": 1,
+     "ivs": {
+      "atk": 14,
+      "def": 10,
+      "spe": 7,
+      "spc": 14
+     },
+     "moves": [
+      "Nudge"
+     ]
+    },
+    {
+     "id": "6abbe7d94f",
+     "no": 1,
+     "dex": 38,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Hasty",
+     "ability": "Quick Reflexes",
+     "caughtAt": "2026-11-04T17:48:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 3,
+     "level": 9,
+     "ivs": {
+      "atk": 8,
+      "def": 15,
+      "spe": 10,
+      "spc": 13
+     },
+     "moves": [
+      "Leaf Toss",
+      "Spark Tap",
+      "Glare"
+     ]
+    },
+    {
+     "id": "11912d3460",
+     "no": 1,
+     "dex": 52,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Jolly",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-04T17:48:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 6,
+     "ivs": {
+      "atk": 7,
+      "def": 14,
+      "spe": 11,
+      "spc": 0
+     },
+     "moves": [
+      "Gust",
+      "Burrow"
+     ]
+    },
+    {
+     "id": "6cb651fecc",
+     "no": 2,
+     "dex": 52,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Modest",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-06T11:19:00.000Z",
+     "caughtWith": "great-orb",
+     "throws": 2,
+     "level": 5,
+     "ivs": {
+      "atk": 5,
+      "def": 0,
+      "spe": 15,
+      "spc": 8
+     },
+     "moves": [
+      "Gust",
+      "Burrow"
+     ]
+    },
+    {
+     "id": "5a9175f2e5",
+     "no": 1,
+     "dex": 63,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Modest",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-06T13:54:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 1,
+     "ivs": {
+      "atk": 6,
+      "def": 13,
+      "spe": 2,
+      "spc": 5
+     },
+     "moves": [
+      "Pebble Shot"
+     ]
+    },
+    {
+     "id": "d02ea59a65",
+     "no": 1,
+     "dex": 77,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Brave",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-04T12:29:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 6,
+     "ivs": {
+      "atk": 5,
+      "def": 0,
+      "spe": 0,
+      "spc": 11
+     },
+     "moves": [
+      "Spark Tap",
+      "Glare"
+     ]
+    },
+    {
+     "id": "80d61b01fd",
+     "no": 1,
+     "dex": 94,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Brave",
+     "ability": "Quick Reflexes",
+     "caughtAt": "2026-11-02T13:11:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 1,
+     "level": 6,
+     "ivs": {
+      "atk": 11,
+      "def": 13,
+      "spe": 0,
+      "spc": 8
+     },
+     "moves": [
+      "Ember Puff",
+      "Hum"
+     ]
+    },
+    {
+     "id": "5054ba078e",
+     "no": 1,
+     "dex": 110,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Modest",
+     "ability": "Quick Reflexes",
+     "caughtAt": "2026-11-02T16:53:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 3,
+     "level": 4,
+     "ivs": {
+      "atk": 6,
+      "def": 15,
+      "spe": 12,
+      "spc": 6
+     },
+     "moves": [
+      "Leaf Toss",
+      "Spark Tap"
+     ]
+    },
+    {
+     "id": "31032d230a",
+     "no": 2,
+     "dex": 110,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Modest",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-08T12:27:00.000Z",
+     "caughtWith": "great-orb",
+     "throws": 1,
+     "level": 2,
+     "ivs": {
+      "atk": 2,
+      "def": 14,
+      "spe": 9,
+      "spc": 12
+     },
+     "moves": [
+      "Leaf Toss"
+     ]
+    },
+    {
+     "id": "4058047a08",
+     "no": 1,
+     "dex": 129,
+     "shiny": false,
+     "gender": null,
+     "nature": "Jolly",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-06T19:39:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 9,
+     "ivs": {
+      "atk": 5,
+      "def": 8,
+      "spe": 9,
+      "spc": 1
+     },
+     "moves": [
+      "Tail Flick",
+      "Nudge",
+      "Pebble Shot"
+     ]
+    },
+    {
+     "id": "c0573de019",
+     "no": 1,
+     "dex": 142,
+     "shiny": false,
+     "gender": "female",
+     "nature": "Jolly",
+     "ability": "Thick Fur",
+     "caughtAt": "2026-11-05T13:14:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 1,
+     "level": 5,
+     "ivs": {
+      "atk": 6,
+      "def": 14,
+      "spe": 12,
+      "spc": 14
+     },
+     "moves": [
+      "Ember Puff",
+      "Hum"
+     ]
+    },
+    {
+     "id": "c9251160b7",
+     "no": 1,
+     "dex": 150,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Brave",
+     "ability": "Keen Nose",
+     "caughtAt": "2026-11-03T12:21:00.000Z",
+     "caughtWith": "master-orb",
+     "throws": 1,
+     "level": 6,
+     "ivs": {
+      "atk": 5,
+      "def": 5,
+      "spe": 15,
+      "spc": 13
+     },
+     "moves": [
+      "Splash Jet",
+      "Tail Flick"
+     ]
+    }
+   ],
+   "bag": {
+    "great-orb": 2,
+    "level-treat": 1,
+    "master-orb": 1
+   }
+  },
+  "49ee037d8342662e63676a9bfccf55ab54c7024801916c28366e7d7de64ecc3f": {
+   "rev": 1,
+   "dex": {
+    "1": 1
+   },
+   "mons": [
+    {
+     "id": "7dcfaa059f",
+     "no": 1,
+     "dex": 1,
+     "shiny": false,
+     "gender": "male",
+     "nature": "Timid",
+     "ability": "Sturdy Shell",
+     "caughtAt": "2026-11-04T13:21:00.000Z",
+     "caughtWith": "basic-orb",
+     "throws": 2,
+     "level": 8,
+     "ivs": {
+      "atk": 9,
+      "def": 3,
+      "spe": 9,
+      "spc": 10
+     },
+     "moves": [
+      "Hum",
+      "Gust",
+      "Burrow"
+     ]
+    }
+   ],
+   "bag": {}
+  }
  }
 }
