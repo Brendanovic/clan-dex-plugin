@@ -2,9 +2,13 @@ package com.clandex;
 
 import com.clandex.ui.ClanDexPanel;
 import com.clandex.ui.Icons;
+import com.clandex.ui.PartyStore;
 import com.google.inject.Provides;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import javax.inject.Inject;
 import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
@@ -64,13 +68,19 @@ public class ClanDexPlugin extends Plugin
 	@Inject
 	private SpriteClient spriteClient;
 
+	@Inject
+	private ConfigManager configManager;
+
 	private ClanDexPanel panel;
 	private NavigationButton navButton;
+
+	/** Which player's party is showing: the start of their key, set at each sync. */
+	private volatile String partyOwner;
 
 	@Override
 	protected void startUp()
 	{
-		panel = new ClanDexPanel(this::sync, this::openSettings, spriteClient);
+		panel = new ClanDexPanel(this::sync, this::openSettings, spriteClient, new SavedParty());
 		panel.setPanelWidth(config.panelWidth().getPixels());
 		navButton = NavigationButton.builder()
 			.tooltip("Clan Dex")
@@ -158,8 +168,33 @@ public class ClanDexPlugin extends Plugin
 	{
 		String displayName = name.replace('\u00A0', ' '); // OSRS names use non-breaking spaces
 		ClanDexPanel target = panel; // the plugin may shut down before the reply arrives
-		dexClient.fetch(url, DexKey.forPlayer(clanKey, name), result ->
+		String playerKey = DexKey.forPlayer(clanKey, name);
+		partyOwner = playerKey.substring(0, 16); // each player keeps their own party
+		dexClient.fetch(url, playerKey, clanKey, result ->
 			SwingUtilities.invokeLater(() -> target.showResult(displayName, result)));
+	}
+
+	/**
+	 * Keeps each player's party in RuneLite's settings (not shown on the settings page), under the
+	 * start of their player key so a name never appears there. Nothing is sent anywhere.
+	 */
+	private final class SavedParty implements PartyStore
+	{
+		@Override
+		public List<String> load()
+		{
+			String saved = partyOwner == null ? null : configManager.getConfiguration(ClanDexConfig.GROUP, "party_" + partyOwner);
+			return saved == null || saved.isEmpty() ? Collections.emptyList() : Arrays.asList(saved.split(","));
+		}
+
+		@Override
+		public void save(List<String> catchIds)
+		{
+			if (partyOwner != null)
+			{
+				configManager.setConfiguration(ClanDexConfig.GROUP, "party_" + partyOwner, String.join(",", catchIds));
+			}
+		}
 	}
 
 	/** Names this plugin in {@link #openSettings()}. Never added to the screen; draws nothing. */

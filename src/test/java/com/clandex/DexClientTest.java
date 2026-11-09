@@ -116,4 +116,43 @@ public class DexClientTest
 		// bag follows the bot's item order, unknown items last; Basic Orbs are unlimited, so never counted
 		assertEquals(java.util.Arrays.asList("level-treat", "mystery"), new java.util.ArrayList<>(p.getBag().keySet()));
 	}
+
+	@Test
+	public void wrongClanKeyShowsNothing()
+	{
+		// keyCheck made by the bot for the key "test-key"; members holds one encrypted name
+		String file = "{\"version\":3," + NAMES + ",\"keyCheck\":\"" + encrypt("clan-dex-key-check") + "\""
+			+ ",\"members\":{\"" + KEY + "\":\"YNDinMCMzE4TF7mPPtFKjIi5Nonw1hAwr2bLR7dwBdQKI08IEYKObRPmNBo=\"}"
+			+ ",\"baseStats\":{\"1\":{\"hp\":45,\"atk\":49,\"def\":49,\"spe\":45,\"spc\":65}}"
+			+ ",\"players\":{\"" + KEY + "\":{\"rev\":1,\"dex\":{\"0\":1},\"mons\":[{\"id\":\"m1\",\"no\":1,\"dex\":0,\"moves\":[\"Growl\",\"Tackle\"]}]}}}";
+
+		SyncResult wrong = client.parse(file, KEY, "some-random-key");
+		assertEquals("That clan key doesn't match your clan's", wrong.getError());
+
+		SyncResult right = client.parse(file, KEY, "test-key");
+		assertEquals(null, right.getError());
+		assertEquals("Fake Test Player", right.getInfo().getMembers().get(KEY));
+		assertEquals(45, right.getInfo().baseStats(0)[0]);                // file's "1" is entry index 0
+		assertEquals(java.util.Arrays.asList("Growl", "Tackle"), right.getPlayer().getCatches().get(0).getMoves());
+	}
+
+	/** The bot's names.js format, so this test can make its own key check. */
+	private static String encrypt(String text)
+	{
+		try
+		{
+			byte[] key = java.security.MessageDigest.getInstance("SHA-256").digest("clan-dex-names|test-key".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+			byte[] iv = new byte[12];
+			javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");
+			cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, new javax.crypto.spec.SecretKeySpec(key, "AES"), new javax.crypto.spec.GCMParameterSpec(128, iv));
+			byte[] body = cipher.doFinal(text.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+			byte[] out = new byte[12 + body.length];
+			System.arraycopy(body, 0, out, 12, body.length);
+			return java.util.Base64.getEncoder().encodeToString(out);
+		}
+		catch (Exception e)
+		{
+			throw new IllegalStateException(e);
+		}
+	}
 }

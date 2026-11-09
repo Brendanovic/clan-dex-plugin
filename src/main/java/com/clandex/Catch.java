@@ -1,6 +1,8 @@
 package com.clandex;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * One caught Creature, as the clan's bot records it. Every field except the entry and shiny flag can
@@ -22,9 +24,10 @@ public final class Catch
 	private final Integer throwCount;   // balls thrown, misses included; null if unknown
 	private final Integer level;        // null if unknown
 	private final int[] ivs;            // attack, defense, speed, special (0-15); null if unknown
+	private final List<String> moves;   // up to 4 move names; empty if unknown
 
 	Catch(String id, Integer number, int index, boolean shiny, String gender, String nature, String ability, boolean hiddenAbility,
-		Instant caughtAt, String caughtWith, Integer throwCount, Integer level, int[] ivs)
+		Instant caughtAt, String caughtWith, Integer throwCount, Integer level, int[] ivs, List<String> moves)
 	{
 		this.id = id;
 		this.number = number;
@@ -39,6 +42,13 @@ public final class Catch
 		this.throwCount = throwCount;
 		this.level = level;
 		this.ivs = ivs == null ? null : ivs.clone();
+		this.moves = Collections.unmodifiableList(moves);
+	}
+
+	/** Up to 4 move names, oldest learned first; empty if unknown. */
+	public List<String> getMoves()
+	{
+		return moves;
 	}
 
 	public String getId()

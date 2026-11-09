@@ -39,7 +39,8 @@ import javax.swing.Timer;
  *            Your most caught
  *  [s] Moroka #001                     Lv 14   <- one block per catch, by the player's number
  *      Male, Great Orb, 3 throws                  for it ("--rarecandy moroka 1" uses it)
- *      Adamant nature, Static
+ *      Adamant nature, Static                     "+ Party" next to the level adds it to the party
+ *      Growl, Tackle
  *      9 Nov 2026, 01:11, IVs 2/5/5/9
  * </pre>
  *
@@ -80,6 +81,7 @@ class DexRow extends JPanel
 	private int count;
 	private List<Catch> catches = Collections.emptyList();
 	private DexInfo info;
+	private PartyControl party; // null until the panel provides it
 
 	/** Whether this row shows pictures: false when the bot sends no sprites. */
 	private boolean spritesOn;
@@ -107,6 +109,18 @@ class DexRow extends JPanel
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		addMouseListener(new RowMouse());
 		setPlayerData(0, false, Collections.emptyList(), null);
+	}
+
+	/** Lets each catch line add itself to, or remove itself from, the party. */
+	void setPartyControl(PartyControl control)
+	{
+		this.party = control;
+	}
+
+	/** Redraws the catch lines, e.g. after the party changed. */
+	void refreshCatchList()
+	{
+		rebuildCatchList();
 	}
 
 	/** Formats an index as its dex number, e.g. 24 becomes "#025". */
@@ -299,10 +313,17 @@ class DexRow extends JPanel
 		JPanel titleRow = new JPanel(new BorderLayout(6, 0));
 		titleRow.setOpaque(false);
 		titleRow.add(Layout.label(title, Theme.SMALL, c.isShiny() ? Theme.SHINY : Theme.TEXT), BorderLayout.CENTER);
+		JPanel titleRight = new JPanel(new BorderLayout(8, 0));
+		titleRight.setOpaque(false);
 		if (c.getLevel() != null)
 		{
-			titleRow.add(Layout.label("Lv " + c.getLevel(), Theme.SMALL, Theme.ACCENT), BorderLayout.EAST);
+			titleRight.add(Layout.label("Lv " + c.getLevel(), Theme.SMALL, Theme.ACCENT), BorderLayout.WEST);
 		}
+		if (party != null && !c.getId().isEmpty())
+		{
+			titleRight.add(partyToggle(c), BorderLayout.EAST);
+		}
+		titleRow.add(titleRight, BorderLayout.EAST);
 
 		JPanel text = new JPanel();
 		text.setOpaque(false);
@@ -315,6 +336,10 @@ class DexRow extends JPanel
 		if (!traits.isEmpty())
 		{
 			text.add(Layout.label(String.join(", ", traits), Theme.SMALL, c.isHiddenAbility() ? Theme.SHINY : Theme.TEXT_MUTED));
+		}
+		if (!c.getMoves().isEmpty())
+		{
+			text.add(Layout.label(String.join(", ", c.getMoves()), Theme.SMALL, Theme.TEXT_MUTED));
 		}
 		text.add(Layout.label(String.join(", ", when), Theme.SMALL, Theme.TEXT_FAINT));
 
@@ -329,6 +354,28 @@ class DexRow extends JPanel
 		line.add(picture, BorderLayout.WEST);
 		line.add(text, BorderLayout.CENTER);
 		return line;
+	}
+
+	/** "+ Party" / "In party": click to add this catch to the party or take it out. */
+	private JLabel partyToggle(Catch c)
+	{
+		boolean in = party.contains(c.getId());
+		JLabel toggle = Layout.label(in ? "In party" : "+ Party", Theme.SMALL, in ? Theme.PROGRESS : Theme.TEXT_MUTED);
+		toggle.setToolTipText(in ? "Remove from your party" : "Add to your party (up to " + PartyStore.MAX_SIZE + ")");
+		toggle.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		toggle.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				if (!party.toggle(c.getId()))
+				{
+					toggle.setText("Party full");
+					toggle.setForeground(Theme.ERROR);
+				}
+			}
+		});
+		return toggle;
 	}
 
 	// ---------------------------------------------------------------- layout

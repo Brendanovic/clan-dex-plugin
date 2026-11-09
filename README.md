@@ -16,7 +16,10 @@ collected, how many times, and what's still out there.
   date and IVs.
   Right-click to copy its name.
 - Shinies get their own sprite and a gold sparkle, and a **Shiny** filter.
+- A **Party** tab: pick up to 6 of your Creature ("+ Party" on any catch) to see their level, HP,
+  stats and moves. Your party is saved in your RuneLite settings.
 - A **Bag** tab shows your unlimited Basic Orbs and the items you've found.
+- A wrong clan key is caught straight away, and shows nothing.
 - Entry pictures come from your clan's bot: shown in full once caught, as a silhouette until then.
   If your clan's bot doesn't provide pictures, entries are listed by name only.
 - A settings cog in the panel, and a **Panel width** setting for a wider, two-column view.

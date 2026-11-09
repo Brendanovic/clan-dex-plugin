@@ -38,8 +38,9 @@ import net.runelite.client.ui.components.IconTextField;
 
 /**
  * The sidebar panel. Top to bottom: title bar with a settings cog, summary card, Sync button
- * and status line, then Dex / Bag tabs. The Dex tab has a search box, All / Caught / Missing /
- * Shiny filters, a sort menu and the list; the Bag tab lists the player's items.
+ * and status line, then Dex / Party / Bag tabs. The Dex tab has a search box, All / Caught /
+ * Missing / Shiny filters, a sort menu and the list; Party shows up to 6 chosen catches with HP,
+ * stats and moves; Bag lists the player's items.
  *
  * <p>While a sync runs, the list is swapped for a shimmering {@link Skeleton}. When the data
  * arrives the rows cascade in, and filtering or sorting animates rows in and out rather than
@@ -59,6 +60,7 @@ public class ClanDexPanel extends PluginPanel
 
 	private static final String VIEW_DEX = "dex";
 	private static final String VIEW_BAG = "bag";
+	private static final String VIEW_PARTY = "party";
 
 	private enum Filter
 	{
@@ -127,6 +129,35 @@ public class ClanDexPanel extends PluginPanel
 	private final AnimatedList list = new AnimatedList();
 	private final JLabel listMessage = Layout.label("Press Sync to load your dex", Theme.SMALL, Theme.TEXT_FAINT);
 	private final BagPanel bag;
+	private final PartyPanel partyPanel;
+	private final PartyStore partyStore;
+	private final PartyControl partyControl = new PartyControl()
+	{
+		@Override
+		public boolean contains(String catchId)
+		{
+			return partyIds.contains(catchId);
+		}
+
+		@Override
+		public boolean toggle(String catchId)
+		{
+			if (partyIds.contains(catchId))
+			{
+				partyIds.remove(catchId);
+			}
+			else if (partyIds.size() >= PartyStore.MAX_SIZE)
+			{
+				return false;
+			}
+			else
+			{
+				partyIds.add(catchId);
+			}
+			partyChanged();
+			return true;
+		}
+	};
 
 	/** Ticks once a second to count down the cooldown and age the "Synced 2m ago" text. */
 	private final Timer ticker = new Timer(1000, e -> refreshSyncControls());
@@ -140,14 +171,19 @@ public class ClanDexPanel extends PluginPanel
 	private Instant lastSynced;       // null until the first successful sync
 	private Instant skeletonShownAt = Instant.MIN;
 	private int panelWidth = PANEL_WIDTH;
+	private final List<String> partyIds = new ArrayList<>();      // catch ids, in party order
+	private Map<String, Catch> catchesById = Collections.emptyMap();
+	private DexInfo lastInfo;
 
-	public ClanDexPanel(Runnable onSync, Runnable onOpenSettings, SpriteLoader sprites)
+	public ClanDexPanel(Runnable onSync, Runnable onOpenSettings, SpriteLoader sprites, PartyStore partyStore)
 	{
 		super(false); // we manage our own scrolling so the header stays put
 		this.onSync = onSync;
 		this.onOpenSettings = onOpenSettings;
 		this.sprites = sprites;
 		this.bag = new BagPanel(sprites);
+		this.partyStore = partyStore;
+		this.partyPanel = new PartyPanel(sprites, id -> partyControl.toggle(id));
 
 		setLayout(new BorderLayout(0, Theme.GAP));
 		setBackground(Theme.BACKGROUND);
@@ -218,6 +254,7 @@ public class ClanDexPanel extends PluginPanel
 		applyPlayer(info, player);
 		requestSprites(info);
 		bag.setBag(info, player);
+		loadParty(info, player);
 
 		lastSynced = Instant.now();
 		setStatus(result.isNoEntry() ? "No entries yet - play in clan chat to start" : "Synced just now", false);
@@ -249,8 +286,8 @@ public class ClanDexPanel extends PluginPanel
 
 		status.setHorizontalAlignment(SwingConstants.CENTER);
 
-		TabBar viewTabs = new TabBar(new String[]{"Dex", "Bag"},
-			i -> views.show(viewArea, i == 0 ? VIEW_DEX : VIEW_BAG));
+		String[] viewNames = {VIEW_DEX, VIEW_PARTY, VIEW_BAG};
+		TabBar viewTabs = new TabBar(new String[]{"Dex", "Party", "Bag"}, i -> views.show(viewArea, viewNames[i]));
 
 		header.add(Layout.fullWidth(buildTitleBar()));
 		header.add(Layout.vgap(Theme.GAP));
@@ -330,6 +367,7 @@ public class ClanDexPanel extends PluginPanel
 
 		viewArea.setOpaque(false);
 		viewArea.add(dexView, VIEW_DEX);
+		viewArea.add(scrolling(partyPanel), VIEW_PARTY);
 		viewArea.add(bagScroll, VIEW_BAG);
 		return viewArea;
 	}
@@ -366,6 +404,62 @@ public class ClanDexPanel extends PluginPanel
 		bar.add(Layout.label("Clan Dex", Theme.TITLE, Theme.TEXT), BorderLayout.WEST);
 		bar.add(cog, BorderLayout.EAST);
 		return bar;
+	}
+
+	/** Wraps a tab's content so it scrolls and stays pinned to the top. */
+	private static JScrollPane scrolling(JPanel inner)
+	{
+		JPanel content = new JPanel(new BorderLayout());
+		content.setBackground(Theme.BACKGROUND);
+		content.add(inner, BorderLayout.NORTH);
+		JScrollPane scroll = new JScrollPane(content);
+		scroll.setBorder(null);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll.getVerticalScrollBar().setUnitIncrement(Theme.ROW_HEIGHT);
+		return scroll;
+	}
+
+	// ---------------------------------------------------------------- party
+
+	/** Loads the saved party for this player, dropping any catch they no longer have. */
+	private void loadParty(DexInfo info, PlayerDex player)
+	{
+		lastInfo = info;
+		catchesById = player.getCatches().stream().filter(c -> !c.getId().isEmpty())
+			.collect(Collectors.toMap(Catch::getId, c -> c, (a, b) -> a));
+		partyIds.clear();
+		for (String id : partyStore.load())
+		{
+			if (catchesById.containsKey(id) && !partyIds.contains(id) && partyIds.size() < PartyStore.MAX_SIZE)
+			{
+				partyIds.add(id);
+			}
+		}
+		showParty();
+	}
+
+	/** Saves the party and redraws everything that shows it. */
+	private void partyChanged()
+	{
+		partyStore.save(new ArrayList<>(partyIds));
+		showParty();
+		for (DexRow row : rows)
+		{
+			if (row.isCaught())
+			{
+				row.refreshCatchList();
+			}
+		}
+	}
+
+	private void showParty()
+	{
+		List<Catch> members = new ArrayList<>();
+		for (String id : partyIds)
+		{
+			members.add(catchesById.get(id));
+		}
+		partyPanel.setParty(members, lastInfo);
 	}
 
 	/** The list and the loading skeleton share this space; a CardLayout swaps between them. */
@@ -419,7 +513,9 @@ public class ClanDexPanel extends PluginPanel
 		rows = new ArrayList<>(entryNames.size());
 		for (int i = 0; i < entryNames.size(); i++)
 		{
-			rows.add(new DexRow(i, entryNames.get(i)));
+			DexRow row = new DexRow(i, entryNames.get(i));
+			row.setPartyControl(partyControl);
+			rows.add(row);
 		}
 		list.setRows(sorted());
 	}

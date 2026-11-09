@@ -26,4 +26,14 @@ public class DexKeyTest
 			"7bd615e18c244ab085d8cc1fa97d74773cad52aeedf95fea11ce5f2de4e6dd3c",
 			DexKey.forPlayer("test-key", "Fake Test Player"));
 	}
+
+	@Test
+	public void decryptsNamesTheBotEncrypted()
+	{
+		// made by the bot's names.js: encryptName('test-key', 'Fake Test Player')
+		String fromBot = "YNDinMCMzE4TF7mPPtFKjIi5Nonw1hAwr2bLR7dwBdQKI08IEYKObRPmNBo=";
+		assertEquals("Fake Test Player", DexKey.decryptName("test-key", fromBot));
+		assertEquals(null, DexKey.decryptName("some-random-key", fromBot)); // nothing, never scrambled text
+		assertEquals(null, DexKey.decryptName("test-key", "not base64 !!"));
+	}
 }

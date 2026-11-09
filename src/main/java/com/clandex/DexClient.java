@@ -70,7 +70,7 @@ class DexClient
 	 * Fetches the file and reports the result for the player published under {@code playerKey}.
 	 * {@code done} runs on OkHttp's thread, so callers must hop to Swing before touching the UI.
 	 */
-	void fetch(String url, String playerKey, Consumer<SyncResult> done)
+	void fetch(String url, String playerKey, String clanKey, Consumer<SyncResult> done)
 	{
 		HttpUrl httpUrl = HttpUrl.parse(toFileUrl(url));
 		if (httpUrl == null)
@@ -109,7 +109,7 @@ class DexClient
 						done.accept(SyncResult.failed("That link is a web page, not the dex file"));
 						return;
 					}
-					done.accept(parse(text, playerKey));
+					done.accept(parse(text, playerKey, clanKey));
 				}
 				catch (Exception e)
 				{
@@ -138,6 +138,16 @@ class DexClient
 	// package-private for DexClientTest
 	SyncResult parse(String json, String playerKey)
 	{
+		return parse(json, playerKey, null);
+	}
+
+	/**
+	 * Reads the file for the player published under {@code playerKey}. With {@code clanKey}, the
+	 * file's key check is verified first (a wrong key stops here, showing nothing) and the player
+	 * list is decrypted.
+	 */
+	SyncResult parse(String json, String playerKey, String clanKey)
+	{
 		JsonObject root = gson.fromJson(json, JsonObject.class);
 
 		int version = root.has("version") ? root.get("version").getAsInt() : 0;
@@ -148,7 +158,12 @@ class DexClient
 				: "The dex file is in an old format");
 		}
 
-		DexInfo info = readInfo(root);
+		if (clanKey != null && root.has("keyCheck") && !DexKey.KEY_CHECK.equals(DexKey.decryptName(clanKey, root.get("keyCheck").getAsString())))
+		{
+			return SyncResult.failed("That clan key doesn't match your clan's");
+		}
+
+		DexInfo info = readInfo(root, clanKey);
 		JsonObject record = playerRecord(root, version, playerKey);
 		if (record == null)
 		{
@@ -204,7 +219,7 @@ class DexClient
 	}
 
 	/** Names, picture links and item names from the top of the file. */
-	private static DexInfo readInfo(JsonObject root)
+	private static DexInfo readInfo(JsonObject root, String clanKey)
 	{
 		List<String> names = new ArrayList<>();
 		for (JsonElement name : root.getAsJsonArray("names"))
@@ -219,7 +234,30 @@ class DexClient
 			itemNames.put(item.getKey(), details.has("name") ? details.get("name").getAsString() : item.getKey());
 		}
 
-		return new DexInfo(names, httpsLink(root, "sprite"), httpsLink(root, "spriteShiny"), httpsLink(root, "itemSprite"), itemNames);
+		Map<Integer, int[]> baseStats = new HashMap<>();
+		for (Map.Entry<String, JsonElement> entry : object(root, "baseStats").entrySet())
+		{
+			JsonObject s = entry.getValue().getAsJsonObject();
+			baseStats.put(Integer.parseInt(entry.getKey()) - 1, // the file counts from 1 (#001)
+				new int[]{intOr(s, "hp", 0), intOr(s, "atk", 0), intOr(s, "def", 0), intOr(s, "spe", 0), intOr(s, "spc", 0)});
+		}
+
+		// names the clan key can't decrypt are left out, never shown scrambled
+		Map<String, String> members = new LinkedHashMap<>();
+		if (clanKey != null)
+		{
+			for (Map.Entry<String, JsonElement> entry : object(root, "members").entrySet())
+			{
+				String name = DexKey.decryptName(clanKey, entry.getValue().getAsString());
+				if (name != null)
+				{
+					members.put(entry.getKey(), name);
+				}
+			}
+		}
+
+		return new DexInfo(names, httpsLink(root, "sprite"), httpsLink(root, "spriteShiny"), httpsLink(root, "itemSprite"), itemNames,
+			baseStats, members, text(root, "statFormula"));
 	}
 
 	/** One entry of a player's "mons" list, or null if it's unusable. Missing details stay null. */
@@ -260,7 +298,21 @@ class DexClient
 			mon.has("caughtWith") && !mon.get("caughtWith").isJsonNull() ? mon.get("caughtWith").getAsString() : null,
 			mon.has("throws") ? mon.get("throws").getAsInt() : null,
 			mon.has("level") ? mon.get("level").getAsInt() : null,
-			ivs);
+			ivs,
+			readMoves(mon));
+	}
+
+	private static List<String> readMoves(JsonObject mon)
+	{
+		List<String> moves = new ArrayList<>();
+		if (mon.has("moves") && mon.get("moves").isJsonArray())
+		{
+			for (JsonElement move : mon.getAsJsonArray("moves"))
+			{
+				moves.add(move.getAsString());
+			}
+		}
+		return moves;
 	}
 
 	/**

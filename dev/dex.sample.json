@@ -212,7 +212,13 @@
       "spc": 15
      },
      "nature": "Naive",
-     "ability": "Sanodr"
+     "ability": "Sanodr",
+     "moves": [
+      "Growl",
+      "Tackle",
+      "Tafigr Zelzelfi",
+      "Rovubr Noroqu"
+     ]
     },
     {
      "id": "56a3370af9",
@@ -232,7 +238,13 @@
      },
      "nature": "Brave",
      "ability": "Katubr Quakafi",
-     "hiddenAbility": true
+     "hiddenAbility": true,
+     "moves": [
+      "Scratch",
+      "Ember",
+      "Leer",
+      "Rage"
+     ]
     },
     {
      "id": "57a51746f3",
@@ -251,7 +263,13 @@
       "spc": 1
      },
      "nature": "Naive",
-     "ability": "Blaze"
+     "ability": "Blaze",
+     "moves": [
+      "Scratch",
+      "Ember",
+      "Leer",
+      "Rage"
+     ]
     },
     {
      "id": "b80ad86ee9",
@@ -270,7 +288,13 @@
       "spc": 14
      },
      "nature": "Naive",
-     "ability": "Torrent"
+     "ability": "Torrent",
+     "moves": [
+      "Tackle",
+      "Quarobr Savulo",
+      "Bubble",
+      "Brapelno Mivenfi"
+     ]
     },
     {
      "id": "0e8f1e71dd",
@@ -289,7 +313,10 @@
       "spc": 13
      },
      "nature": "Brave",
-     "ability": "Takata Bragridr"
+     "ability": "Takata Bragridr",
+     "moves": [
+      "Harden"
+     ]
     },
     {
      "id": "34bc3f7b0c",
@@ -308,7 +335,13 @@
       "spc": 10
      },
      "nature": "Quiet",
-     "ability": "Zelpelpe Grisadr"
+     "ability": "Zelpelpe Grisadr",
+     "moves": [
+      "Gust",
+      "Pelzelmi Mizelve",
+      "Quafimo Lomiro",
+      "Whirlwind"
+     ]
     },
     {
      "id": "6277e4f4f4",
@@ -327,7 +360,13 @@
       "spc": 8
      },
      "nature": "Modest",
-     "ability": "Zelpelpe Grisadr"
+     "ability": "Zelpelpe Grisadr",
+     "moves": [
+      "Gust",
+      "Pelzelmi Mizelve",
+      "Quafimo Lomiro",
+      "Whirlwind"
+     ]
     },
     {
      "id": "44e3bb5e2c",
@@ -346,7 +385,13 @@
       "spc": 2
      },
      "nature": "Timid",
-     "ability": "Zelpelpe Grisadr"
+     "ability": "Zelpelpe Grisadr",
+     "moves": [
+      "Pelzelmi Mizelve",
+      "Quafimo Lomiro",
+      "Whirlwind",
+      "Drisami Motaka"
+     ]
     },
     {
      "id": "820fe89363",
@@ -365,7 +410,12 @@
       "spc": 1
      },
      "nature": "Brave",
-     "ability": "Zelpelpe Grisadr"
+     "ability": "Zelpelpe Grisadr",
+     "moves": [
+      "Gust",
+      "Pelzelmi Mizelve",
+      "Quafimo Lomiro"
+     ]
     },
     {
      "id": "b0ac89ea74",
@@ -384,7 +434,13 @@
       "spc": 9
      },
      "nature": "Naive",
-     "ability": "Static"
+     "ability": "Static",
+     "moves": [
+      "Growl",
+      "Zelmoro Rodrilo",
+      "Venfiqu Grizelgr",
+      "Quafimo Lomiro"
+     ]
     },
     {
      "id": "277383548c",
@@ -403,7 +459,11 @@
       "spc": 4
      },
      "nature": "Quiet",
-     "ability": "Static"
+     "ability": "Static",
+     "moves": [
+      "Growl",
+      "Zelmoro Rodrilo"
+     ]
     },
     {
      "id": "4563905274",
@@ -422,7 +482,12 @@
       "spc": 14
      },
      "nature": "Timid",
-     "ability": "Static"
+     "ability": "Static",
+     "moves": [
+      "Growl",
+      "Zelmoro Rodrilo",
+      "Venfiqu Grizelgr"
+     ]
     },
     {
      "id": "a9ab021c23",
@@ -441,7 +506,13 @@
       "spc": 9
      },
      "nature": "Adamant",
-     "ability": "Tutano Mibratu"
+     "ability": "Tutano Mibratu",
+     "moves": [
+      "Sing",
+      "Pound",
+      "Disable",
+      "Pelgrilo Losatu"
+     ]
     },
     {
      "id": "91e629548c",
@@ -460,7 +531,13 @@
       "spc": 10
      },
      "nature": "Naive",
-     "ability": "Limber"
+     "ability": "Limber",
+     "moves": [
+      "Growl",
+      "Scratch",
+      "Screech",
+      "Drisalo Robradr"
+     ]
     },
     {
      "id": "19a0340e26",
@@ -479,7 +556,13 @@
       "spc": 11
      },
      "nature": "Jolly",
-     "ability": "Limber"
+     "ability": "Limber",
+     "moves": [
+      "Bite",
+      "Growl",
+      "Scratch",
+      "Screech"
+     ]
     },
     {
      "id": "2abdfb3de8",
@@ -498,7 +581,12 @@
       "spc": 8
      },
      "nature": "Timid",
-     "ability": "Synchronize"
+     "ability": "Synchronize",
+     "moves": [
+      "Confusion",
+      "Disable",
+      "Teleport"
+     ]
     },
     {
      "id": "0d01a51cd6",
@@ -517,7 +605,13 @@
       "spc": 11
      },
      "nature": "Adamant",
-     "ability": "Quaquamo Grimolo"
+     "ability": "Quaquamo Grimolo",
+     "moves": [
+      "Ember",
+      "Growl",
+      "Stomp",
+      "Quarobr Savulo"
+     ]
     },
     {
      "id": "82a608bee3",
@@ -536,7 +630,13 @@
       "spc": 7
      },
      "nature": "Brave",
-     "ability": "Sabravu Ventulo"
+     "ability": "Sabravu Ventulo",
+     "moves": [
+      "Tackle",
+      "Bind",
+      "Zelkadr Nopelka",
+      "Rage"
+     ]
     },
     {
      "id": "1e2d36e6fa",
@@ -555,7 +655,10 @@
       "spc": 10
      },
      "nature": "Hardy",
-     "ability": "Venvenlo Quatumo"
+     "ability": "Venvenlo Quatumo",
+     "moves": [
+      "Ropelfi Loquape"
+     ]
     },
     {
      "id": "ef2a3fb2c9",
@@ -574,7 +677,10 @@
       "spc": 6
      },
      "nature": "Quiet",
-     "ability": "Venvenlo Quatumo"
+     "ability": "Venvenlo Quatumo",
+     "moves": [
+      "Ropelfi Loquape"
+     ]
     },
     {
      "id": "1e5f635105",
@@ -593,7 +699,13 @@
       "spc": 8
      },
      "nature": "Bold",
-     "ability": "Intimidate"
+     "ability": "Intimidate",
+     "moves": [
+      "Bite",
+      "Lomoro Lotaro",
+      "Fikaqu Grikaqu",
+      "Leer"
+     ]
     },
     {
      "id": "d40f044faa",
@@ -612,7 +724,12 @@
       "spc": 9
      },
      "nature": "Naive",
-     "ability": "Immunity"
+     "ability": "Immunity",
+     "moves": [
+      "Amnesia",
+      "Headbutt",
+      "Rest"
+     ]
     },
     {
      "id": "ada6517c8d",
@@ -631,7 +748,11 @@
       "spc": 13
      },
      "nature": "Quiet",
-     "ability": "Synchronize"
+     "ability": "Synchronize",
+     "moves": [
+      "Pound",
+      "Transform"
+     ]
     }
    ],
    "bag": {
@@ -663,10 +784,1080 @@
       "spc": 14
      },
      "nature": "Timid",
-     "ability": "Sanodr"
+     "ability": "Sanodr",
+     "moves": [
+      "Tafigr Zelzelfi",
+      "Tackle",
+      "Rovubr Noroqu",
+      "Zelgrisa Modrita"
+     ]
     }
    ],
    "bag": {}
   }
+ },
+ "baseStats": {
+  "1": {
+   "hp": 45,
+   "atk": 49,
+   "def": 49,
+   "spe": 45,
+   "spc": 65
+  },
+  "2": {
+   "hp": 60,
+   "atk": 62,
+   "def": 63,
+   "spe": 60,
+   "spc": 80
+  },
+  "3": {
+   "hp": 80,
+   "atk": 82,
+   "def": 83,
+   "spe": 80,
+   "spc": 100
+  },
+  "4": {
+   "hp": 39,
+   "atk": 52,
+   "def": 43,
+   "spe": 65,
+   "spc": 60
+  },
+  "5": {
+   "hp": 58,
+   "atk": 64,
+   "def": 58,
+   "spe": 80,
+   "spc": 80
+  },
+  "6": {
+   "hp": 78,
+   "atk": 84,
+   "def": 78,
+   "spe": 100,
+   "spc": 109
+  },
+  "7": {
+   "hp": 44,
+   "atk": 48,
+   "def": 65,
+   "spe": 43,
+   "spc": 50
+  },
+  "8": {
+   "hp": 59,
+   "atk": 63,
+   "def": 80,
+   "spe": 58,
+   "spc": 65
+  },
+  "9": {
+   "hp": 79,
+   "atk": 83,
+   "def": 100,
+   "spe": 78,
+   "spc": 85
+  },
+  "10": {
+   "hp": 45,
+   "atk": 30,
+   "def": 35,
+   "spe": 45,
+   "spc": 20
+  },
+  "11": {
+   "hp": 50,
+   "atk": 20,
+   "def": 55,
+   "spe": 30,
+   "spc": 25
+  },
+  "12": {
+   "hp": 60,
+   "atk": 45,
+   "def": 50,
+   "spe": 70,
+   "spc": 90
+  },
+  "13": {
+   "hp": 40,
+   "atk": 35,
+   "def": 30,
+   "spe": 50,
+   "spc": 20
+  },
+  "14": {
+   "hp": 45,
+   "atk": 25,
+   "def": 50,
+   "spe": 35,
+   "spc": 25
+  },
+  "15": {
+   "hp": 65,
+   "atk": 90,
+   "def": 40,
+   "spe": 75,
+   "spc": 45
+  },
+  "16": {
+   "hp": 40,
+   "atk": 45,
+   "def": 40,
+   "spe": 56,
+   "spc": 35
+  },
+  "17": {
+   "hp": 63,
+   "atk": 60,
+   "def": 55,
+   "spe": 71,
+   "spc": 50
+  },
+  "18": {
+   "hp": 83,
+   "atk": 80,
+   "def": 75,
+   "spe": 101,
+   "spc": 70
+  },
+  "19": {
+   "hp": 30,
+   "atk": 56,
+   "def": 35,
+   "spe": 72,
+   "spc": 25
+  },
+  "20": {
+   "hp": 55,
+   "atk": 81,
+   "def": 60,
+   "spe": 97,
+   "spc": 50
+  },
+  "21": {
+   "hp": 40,
+   "atk": 60,
+   "def": 30,
+   "spe": 70,
+   "spc": 31
+  },
+  "22": {
+   "hp": 65,
+   "atk": 90,
+   "def": 65,
+   "spe": 100,
+   "spc": 61
+  },
+  "23": {
+   "hp": 35,
+   "atk": 60,
+   "def": 44,
+   "spe": 55,
+   "spc": 40
+  },
+  "24": {
+   "hp": 60,
+   "atk": 95,
+   "def": 69,
+   "spe": 80,
+   "spc": 65
+  },
+  "25": {
+   "hp": 35,
+   "atk": 55,
+   "def": 40,
+   "spe": 90,
+   "spc": 50
+  },
+  "26": {
+   "hp": 60,
+   "atk": 90,
+   "def": 55,
+   "spe": 110,
+   "spc": 90
+  },
+  "27": {
+   "hp": 50,
+   "atk": 75,
+   "def": 85,
+   "spe": 40,
+   "spc": 20
+  },
+  "28": {
+   "hp": 75,
+   "atk": 100,
+   "def": 110,
+   "spe": 65,
+   "spc": 45
+  },
+  "29": {
+   "hp": 55,
+   "atk": 47,
+   "def": 52,
+   "spe": 41,
+   "spc": 40
+  },
+  "30": {
+   "hp": 70,
+   "atk": 62,
+   "def": 67,
+   "spe": 56,
+   "spc": 55
+  },
+  "31": {
+   "hp": 90,
+   "atk": 92,
+   "def": 87,
+   "spe": 76,
+   "spc": 75
+  },
+  "32": {
+   "hp": 46,
+   "atk": 57,
+   "def": 40,
+   "spe": 50,
+   "spc": 40
+  },
+  "33": {
+   "hp": 61,
+   "atk": 72,
+   "def": 57,
+   "spe": 65,
+   "spc": 55
+  },
+  "34": {
+   "hp": 81,
+   "atk": 102,
+   "def": 77,
+   "spe": 85,
+   "spc": 85
+  },
+  "35": {
+   "hp": 70,
+   "atk": 45,
+   "def": 48,
+   "spe": 35,
+   "spc": 60
+  },
+  "36": {
+   "hp": 95,
+   "atk": 70,
+   "def": 73,
+   "spe": 60,
+   "spc": 95
+  },
+  "37": {
+   "hp": 38,
+   "atk": 41,
+   "def": 40,
+   "spe": 65,
+   "spc": 50
+  },
+  "38": {
+   "hp": 73,
+   "atk": 76,
+   "def": 75,
+   "spe": 100,
+   "spc": 81
+  },
+  "39": {
+   "hp": 115,
+   "atk": 45,
+   "def": 20,
+   "spe": 20,
+   "spc": 45
+  },
+  "40": {
+   "hp": 140,
+   "atk": 70,
+   "def": 45,
+   "spe": 45,
+   "spc": 85
+  },
+  "41": {
+   "hp": 40,
+   "atk": 45,
+   "def": 35,
+   "spe": 55,
+   "spc": 30
+  },
+  "42": {
+   "hp": 75,
+   "atk": 80,
+   "def": 70,
+   "spe": 90,
+   "spc": 65
+  },
+  "43": {
+   "hp": 45,
+   "atk": 50,
+   "def": 55,
+   "spe": 30,
+   "spc": 75
+  },
+  "44": {
+   "hp": 60,
+   "atk": 65,
+   "def": 70,
+   "spe": 40,
+   "spc": 85
+  },
+  "45": {
+   "hp": 75,
+   "atk": 80,
+   "def": 85,
+   "spe": 50,
+   "spc": 110
+  },
+  "46": {
+   "hp": 35,
+   "atk": 70,
+   "def": 55,
+   "spe": 25,
+   "spc": 45
+  },
+  "47": {
+   "hp": 60,
+   "atk": 95,
+   "def": 80,
+   "spe": 30,
+   "spc": 60
+  },
+  "48": {
+   "hp": 60,
+   "atk": 55,
+   "def": 50,
+   "spe": 45,
+   "spc": 40
+  },
+  "49": {
+   "hp": 70,
+   "atk": 65,
+   "def": 60,
+   "spe": 90,
+   "spc": 90
+  },
+  "50": {
+   "hp": 10,
+   "atk": 55,
+   "def": 25,
+   "spe": 95,
+   "spc": 35
+  },
+  "51": {
+   "hp": 35,
+   "atk": 100,
+   "def": 50,
+   "spe": 120,
+   "spc": 50
+  },
+  "52": {
+   "hp": 40,
+   "atk": 45,
+   "def": 35,
+   "spe": 90,
+   "spc": 40
+  },
+  "53": {
+   "hp": 65,
+   "atk": 70,
+   "def": 60,
+   "spe": 115,
+   "spc": 65
+  },
+  "54": {
+   "hp": 50,
+   "atk": 52,
+   "def": 48,
+   "spe": 55,
+   "spc": 65
+  },
+  "55": {
+   "hp": 80,
+   "atk": 82,
+   "def": 78,
+   "spe": 85,
+   "spc": 95
+  },
+  "56": {
+   "hp": 40,
+   "atk": 80,
+   "def": 35,
+   "spe": 70,
+   "spc": 35
+  },
+  "57": {
+   "hp": 65,
+   "atk": 105,
+   "def": 60,
+   "spe": 95,
+   "spc": 60
+  },
+  "58": {
+   "hp": 55,
+   "atk": 70,
+   "def": 45,
+   "spe": 60,
+   "spc": 70
+  },
+  "59": {
+   "hp": 90,
+   "atk": 110,
+   "def": 80,
+   "spe": 95,
+   "spc": 100
+  },
+  "60": {
+   "hp": 40,
+   "atk": 50,
+   "def": 40,
+   "spe": 90,
+   "spc": 40
+  },
+  "61": {
+   "hp": 65,
+   "atk": 65,
+   "def": 65,
+   "spe": 90,
+   "spc": 50
+  },
+  "62": {
+   "hp": 90,
+   "atk": 95,
+   "def": 95,
+   "spe": 70,
+   "spc": 70
+  },
+  "63": {
+   "hp": 25,
+   "atk": 20,
+   "def": 15,
+   "spe": 90,
+   "spc": 105
+  },
+  "64": {
+   "hp": 40,
+   "atk": 35,
+   "def": 30,
+   "spe": 105,
+   "spc": 120
+  },
+  "65": {
+   "hp": 55,
+   "atk": 50,
+   "def": 45,
+   "spe": 120,
+   "spc": 135
+  },
+  "66": {
+   "hp": 70,
+   "atk": 80,
+   "def": 50,
+   "spe": 35,
+   "spc": 35
+  },
+  "67": {
+   "hp": 80,
+   "atk": 100,
+   "def": 70,
+   "spe": 45,
+   "spc": 50
+  },
+  "68": {
+   "hp": 90,
+   "atk": 130,
+   "def": 80,
+   "spe": 55,
+   "spc": 65
+  },
+  "69": {
+   "hp": 50,
+   "atk": 75,
+   "def": 35,
+   "spe": 40,
+   "spc": 70
+  },
+  "70": {
+   "hp": 65,
+   "atk": 90,
+   "def": 50,
+   "spe": 55,
+   "spc": 85
+  },
+  "71": {
+   "hp": 80,
+   "atk": 105,
+   "def": 65,
+   "spe": 70,
+   "spc": 100
+  },
+  "72": {
+   "hp": 40,
+   "atk": 40,
+   "def": 35,
+   "spe": 70,
+   "spc": 50
+  },
+  "73": {
+   "hp": 80,
+   "atk": 70,
+   "def": 65,
+   "spe": 100,
+   "spc": 80
+  },
+  "74": {
+   "hp": 40,
+   "atk": 80,
+   "def": 100,
+   "spe": 20,
+   "spc": 30
+  },
+  "75": {
+   "hp": 55,
+   "atk": 95,
+   "def": 115,
+   "spe": 35,
+   "spc": 45
+  },
+  "76": {
+   "hp": 80,
+   "atk": 120,
+   "def": 130,
+   "spe": 45,
+   "spc": 55
+  },
+  "77": {
+   "hp": 50,
+   "atk": 85,
+   "def": 55,
+   "spe": 90,
+   "spc": 65
+  },
+  "78": {
+   "hp": 65,
+   "atk": 100,
+   "def": 70,
+   "spe": 105,
+   "spc": 80
+  },
+  "79": {
+   "hp": 90,
+   "atk": 65,
+   "def": 65,
+   "spe": 15,
+   "spc": 40
+  },
+  "80": {
+   "hp": 95,
+   "atk": 75,
+   "def": 110,
+   "spe": 30,
+   "spc": 100
+  },
+  "81": {
+   "hp": 25,
+   "atk": 35,
+   "def": 70,
+   "spe": 45,
+   "spc": 95
+  },
+  "82": {
+   "hp": 50,
+   "atk": 60,
+   "def": 95,
+   "spe": 70,
+   "spc": 120
+  },
+  "83": {
+   "hp": 52,
+   "atk": 90,
+   "def": 55,
+   "spe": 60,
+   "spc": 58
+  },
+  "84": {
+   "hp": 35,
+   "atk": 85,
+   "def": 45,
+   "spe": 75,
+   "spc": 35
+  },
+  "85": {
+   "hp": 60,
+   "atk": 110,
+   "def": 70,
+   "spe": 110,
+   "spc": 60
+  },
+  "86": {
+   "hp": 65,
+   "atk": 45,
+   "def": 55,
+   "spe": 45,
+   "spc": 45
+  },
+  "87": {
+   "hp": 90,
+   "atk": 70,
+   "def": 80,
+   "spe": 70,
+   "spc": 70
+  },
+  "88": {
+   "hp": 80,
+   "atk": 80,
+   "def": 50,
+   "spe": 25,
+   "spc": 40
+  },
+  "89": {
+   "hp": 105,
+   "atk": 105,
+   "def": 75,
+   "spe": 50,
+   "spc": 65
+  },
+  "90": {
+   "hp": 30,
+   "atk": 65,
+   "def": 100,
+   "spe": 40,
+   "spc": 45
+  },
+  "91": {
+   "hp": 50,
+   "atk": 95,
+   "def": 180,
+   "spe": 70,
+   "spc": 85
+  },
+  "92": {
+   "hp": 30,
+   "atk": 35,
+   "def": 30,
+   "spe": 80,
+   "spc": 100
+  },
+  "93": {
+   "hp": 45,
+   "atk": 50,
+   "def": 45,
+   "spe": 95,
+   "spc": 115
+  },
+  "94": {
+   "hp": 60,
+   "atk": 65,
+   "def": 60,
+   "spe": 110,
+   "spc": 130
+  },
+  "95": {
+   "hp": 35,
+   "atk": 45,
+   "def": 160,
+   "spe": 70,
+   "spc": 30
+  },
+  "96": {
+   "hp": 60,
+   "atk": 48,
+   "def": 45,
+   "spe": 42,
+   "spc": 43
+  },
+  "97": {
+   "hp": 85,
+   "atk": 73,
+   "def": 70,
+   "spe": 67,
+   "spc": 73
+  },
+  "98": {
+   "hp": 30,
+   "atk": 105,
+   "def": 90,
+   "spe": 50,
+   "spc": 25
+  },
+  "99": {
+   "hp": 55,
+   "atk": 130,
+   "def": 115,
+   "spe": 75,
+   "spc": 50
+  },
+  "100": {
+   "hp": 40,
+   "atk": 30,
+   "def": 50,
+   "spe": 100,
+   "spc": 55
+  },
+  "101": {
+   "hp": 60,
+   "atk": 50,
+   "def": 70,
+   "spe": 150,
+   "spc": 80
+  },
+  "102": {
+   "hp": 60,
+   "atk": 40,
+   "def": 80,
+   "spe": 40,
+   "spc": 60
+  },
+  "103": {
+   "hp": 95,
+   "atk": 95,
+   "def": 85,
+   "spe": 55,
+   "spc": 125
+  },
+  "104": {
+   "hp": 50,
+   "atk": 50,
+   "def": 95,
+   "spe": 35,
+   "spc": 40
+  },
+  "105": {
+   "hp": 60,
+   "atk": 80,
+   "def": 110,
+   "spe": 45,
+   "spc": 50
+  },
+  "106": {
+   "hp": 50,
+   "atk": 120,
+   "def": 53,
+   "spe": 87,
+   "spc": 35
+  },
+  "107": {
+   "hp": 50,
+   "atk": 105,
+   "def": 79,
+   "spe": 76,
+   "spc": 35
+  },
+  "108": {
+   "hp": 90,
+   "atk": 55,
+   "def": 75,
+   "spe": 30,
+   "spc": 60
+  },
+  "109": {
+   "hp": 40,
+   "atk": 65,
+   "def": 95,
+   "spe": 35,
+   "spc": 60
+  },
+  "110": {
+   "hp": 65,
+   "atk": 90,
+   "def": 120,
+   "spe": 60,
+   "spc": 85
+  },
+  "111": {
+   "hp": 80,
+   "atk": 85,
+   "def": 95,
+   "spe": 25,
+   "spc": 30
+  },
+  "112": {
+   "hp": 105,
+   "atk": 130,
+   "def": 120,
+   "spe": 40,
+   "spc": 45
+  },
+  "113": {
+   "hp": 250,
+   "atk": 5,
+   "def": 5,
+   "spe": 50,
+   "spc": 35
+  },
+  "114": {
+   "hp": 65,
+   "atk": 55,
+   "def": 115,
+   "spe": 60,
+   "spc": 100
+  },
+  "115": {
+   "hp": 105,
+   "atk": 95,
+   "def": 80,
+   "spe": 90,
+   "spc": 40
+  },
+  "116": {
+   "hp": 30,
+   "atk": 40,
+   "def": 70,
+   "spe": 60,
+   "spc": 70
+  },
+  "117": {
+   "hp": 55,
+   "atk": 65,
+   "def": 95,
+   "spe": 85,
+   "spc": 95
+  },
+  "118": {
+   "hp": 45,
+   "atk": 67,
+   "def": 60,
+   "spe": 63,
+   "spc": 35
+  },
+  "119": {
+   "hp": 80,
+   "atk": 92,
+   "def": 65,
+   "spe": 68,
+   "spc": 65
+  },
+  "120": {
+   "hp": 30,
+   "atk": 45,
+   "def": 55,
+   "spe": 85,
+   "spc": 70
+  },
+  "121": {
+   "hp": 60,
+   "atk": 75,
+   "def": 85,
+   "spe": 115,
+   "spc": 100
+  },
+  "122": {
+   "hp": 40,
+   "atk": 45,
+   "def": 65,
+   "spe": 90,
+   "spc": 100
+  },
+  "123": {
+   "hp": 70,
+   "atk": 110,
+   "def": 80,
+   "spe": 105,
+   "spc": 55
+  },
+  "124": {
+   "hp": 65,
+   "atk": 50,
+   "def": 35,
+   "spe": 95,
+   "spc": 115
+  },
+  "125": {
+   "hp": 65,
+   "atk": 83,
+   "def": 57,
+   "spe": 105,
+   "spc": 95
+  },
+  "126": {
+   "hp": 65,
+   "atk": 95,
+   "def": 57,
+   "spe": 93,
+   "spc": 100
+  },
+  "127": {
+   "hp": 65,
+   "atk": 125,
+   "def": 100,
+   "spe": 85,
+   "spc": 55
+  },
+  "128": {
+   "hp": 75,
+   "atk": 100,
+   "def": 95,
+   "spe": 110,
+   "spc": 40
+  },
+  "129": {
+   "hp": 20,
+   "atk": 10,
+   "def": 55,
+   "spe": 80,
+   "spc": 15
+  },
+  "130": {
+   "hp": 95,
+   "atk": 125,
+   "def": 79,
+   "spe": 81,
+   "spc": 60
+  },
+  "131": {
+   "hp": 130,
+   "atk": 85,
+   "def": 80,
+   "spe": 60,
+   "spc": 85
+  },
+  "132": {
+   "hp": 48,
+   "atk": 48,
+   "def": 48,
+   "spe": 48,
+   "spc": 48
+  },
+  "133": {
+   "hp": 55,
+   "atk": 55,
+   "def": 50,
+   "spe": 55,
+   "spc": 45
+  },
+  "134": {
+   "hp": 130,
+   "atk": 65,
+   "def": 60,
+   "spe": 65,
+   "spc": 110
+  },
+  "135": {
+   "hp": 65,
+   "atk": 65,
+   "def": 60,
+   "spe": 130,
+   "spc": 110
+  },
+  "136": {
+   "hp": 65,
+   "atk": 130,
+   "def": 60,
+   "spe": 65,
+   "spc": 95
+  },
+  "137": {
+   "hp": 65,
+   "atk": 60,
+   "def": 70,
+   "spe": 40,
+   "spc": 85
+  },
+  "138": {
+   "hp": 35,
+   "atk": 40,
+   "def": 100,
+   "spe": 35,
+   "spc": 90
+  },
+  "139": {
+   "hp": 70,
+   "atk": 60,
+   "def": 125,
+   "spe": 55,
+   "spc": 115
+  },
+  "140": {
+   "hp": 30,
+   "atk": 80,
+   "def": 90,
+   "spe": 55,
+   "spc": 55
+  },
+  "141": {
+   "hp": 60,
+   "atk": 115,
+   "def": 105,
+   "spe": 80,
+   "spc": 65
+  },
+  "142": {
+   "hp": 80,
+   "atk": 105,
+   "def": 65,
+   "spe": 130,
+   "spc": 60
+  },
+  "143": {
+   "hp": 160,
+   "atk": 110,
+   "def": 65,
+   "spe": 30,
+   "spc": 65
+  },
+  "144": {
+   "hp": 90,
+   "atk": 85,
+   "def": 100,
+   "spe": 85,
+   "spc": 95
+  },
+  "145": {
+   "hp": 90,
+   "atk": 90,
+   "def": 85,
+   "spe": 100,
+   "spc": 125
+  },
+  "146": {
+   "hp": 90,
+   "atk": 100,
+   "def": 90,
+   "spe": 90,
+   "spc": 125
+  },
+  "147": {
+   "hp": 41,
+   "atk": 64,
+   "def": 45,
+   "spe": 50,
+   "spc": 50
+  },
+  "148": {
+   "hp": 61,
+   "atk": 84,
+   "def": 65,
+   "spe": 70,
+   "spc": 70
+  },
+  "149": {
+   "hp": 91,
+   "atk": 134,
+   "def": 95,
+   "spe": 80,
+   "spc": 100
+  },
+  "150": {
+   "hp": 106,
+   "atk": 110,
+   "def": 90,
+   "spe": 130,
+   "spc": 154
+  },
+  "151": {
+   "hp": 100,
+   "atk": 100,
+   "def": 100,
+   "spe": 100,
+   "spc": 100
+  }
+ },
+ "keyCheck": "wIZwwKZdzstj9kmEoCjGPBXDwpBlmR7lR6r8YAK3aIzmpH2z5u/pMjT40EjSnQ==",
+ "members": {
+  "9126d1c3c91a709ad05e2654308ac83327eed262c3474d5f9c22b61e3b94ae72": "RvGaiuqwNGBTClw/aRv4JSyQuwrnvA6DypDOjP83qea837suPx4UPR6OYHY=",
+  "49ee037d8342662e63676a9bfccf55ab54c7024801916c28366e7d7de64ecc3f": "IgVAayAI4hEEuW62EEb10trHsLjB/cT7KHU/tJQUeSLnBYhy03BoODAkwy6EJls="
  }
 }

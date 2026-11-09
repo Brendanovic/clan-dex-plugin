@@ -33,13 +33,18 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `ClanDexConfig.java` | Settings: clan key, panel width, name override, data URL |
 | `DexClient.java` | Downloads and parses the dex file |
 | `SpriteClient.java` | Downloads entry images from the bot's link pattern; session cache |
-| `DexKey.java` | Name normalisation and the HMAC key; must match the bot exactly |
+| `DexKey.java` | Name normalisation, the HMAC key, and decrypting the player list; must match the bot exactly |
+| `stats/StatFormula.java` | Interface for a stat formula (HP, Atk, Def, Spe, Spc from base stats, IVs, level) |
+| `stats/Gen1Formula.java` | The Gen 1 formula (the default) |
+| `stats/StatFormulas.java` | Formulas by name; the bot's `statFormula` picks one, unknown names fall back to Gen 1 |
 | `SyncResult.java` | Immutable result of one sync: `DexInfo` + `PlayerDex`, no entry, or an error |
 | `DexInfo.java` | File-level data: entry names, sprite / shiny / item picture links, item names |
 | `PlayerDex.java` | One player's data: catch counts, each `Catch`, and their bag |
 | `Catch.java` | One caught Creature: id, number, entry, shiny, gender, nature, ability, date, ball, throws, level, IVs (details may be missing) |
 | `ui/ClanDexPanel.java` | The panel: title bar, sync, Dex / Bag tabs; Dex has search, filters (incl. Shiny), sort, list/skeleton |
-| `ui/BagPanel.java` | The Bag tab: items with pictures and counts |
+| `ui/BagPanel.java` | The Bag tab: unlimited Basic Orbs, then items with pictures and counts |
+| `ui/PartyPanel.java` | The Party tab: up to 6 cards with sprite, level, HP bar, stats, moves |
+| `ui/PartyStore.java` / `ui/PartyControl.java` | Where the party is saved (RuneLite settings, per player) / how catch lines add to it |
 | `ui/TabBar.java` | Flat tab row used for Dex / Bag and the filters |
 | `ui/Links.java` | Fills in `{n}` / `{id}` in the bot's picture link patterns |
 | `ui/AnimatedList.java` | List that animates rows in/out and flows into columns when wide |
@@ -52,6 +57,7 @@ RuneLite: Clan Dex panel --(Sync button, HTTPS GET)--> GitHub secret gist: dex.j
 | `ui/Theme.java` | **All** colours, fonts, sizes and animation timings |
 | `ui/Layout.java` | Small Swing helpers |
 | `src/test/.../ClanDexPluginTest.java` | Launches a dev client with the plugin loaded |
+| `src/test/.../stats/StatFormulasTest.java` | Gen 1 worked examples; picking formulas by name |
 | `src/test/.../DexKeyTest.java` | Checks the hash matches a value produced by the bot |
 | `src/test/.../DexClientTest.java` | Gist link handling; reading formats 2 and 3, catches, bag, items |
 | `dev/dex.sample.json` | Committed sample data: made-up names, catches (2 shiny) and a bag; no pictures |
@@ -105,6 +111,24 @@ bumping `version` (`DexClient.SUPPORTED_VERSION`).
   updated yet; `DexClientTest` covers both.
 - **No names are ever published.** Without the clan key, the file can't be matched to players,
   not even by guessing names from the hiscores.
+
+## Party, player list and wrong keys
+
+- **Party** is local: up to 6 catch ids saved in RuneLite's config as `party_<first 16 chars of the
+  player key>` (never a name), by `ClanDexPlugin.SavedParty`. Nothing is sent. Catches no longer in
+  the player's data are dropped on load. Battles would need the party to reach the bot, which needs
+  an authenticated way for the plugin to send requests (see the next item).
+- **Trades are postponed.** Accepting a trade must be provably the player, and the plugin can't
+  write to the bot yet. Likely design: a one-time link (the plugin makes a token, the player types
+  `--link <code>` once in clan chat), then signed requests via a Discord webhook the bot reads.
+- **Player list:** the file's `members` map player keys to names encrypted with the clan key
+  (AES-256-GCM; `DexKey.decryptName`, mirroring the bot's names.js). A wrong key fails to decrypt
+  (null), never garbage. `keyCheck` decrypts to `clan-dex-key-check` with the right key; if it
+  doesn't, the sync stops with "That clan key doesn't match your clan's" and shows nothing.
+- **Stats:** `baseStats` (by dex number) + a catch's IVs and level go through the `StatFormula`
+  named by the file's `statFormula` (default `gen1`: Gen 1 formula, HP IV built from the other IVs'
+  low bits). New formula: implement `StatFormula`, register it in `StatFormulas`, then have the bot
+  publish its name. HP shows as full until battles exist.
 
 ## Threads (the most common source of RuneLite bugs)
 
